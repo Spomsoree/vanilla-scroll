@@ -241,6 +241,9 @@
         section.example#example2-container {
             height: 120vh;
         }
+        section.example#example3-container {
+            height: 120vh;
+        }
 
         section.example .content {
             position: sticky;
@@ -279,9 +282,6 @@
             pointer-events: all;
         }
     </style>
-    <header>
-        <div class="inner-block"></div>
-    </header>
     <section class="intro container" id="intro-container">
         <div class="anchor" id="intro" aria-hidden="true"></div>
         <div class="content">
@@ -300,9 +300,12 @@
             <h2 id="example2-title">Example 2</h2>
         </div>
     </section>
-    <footer>
-        <div class="footer-container"></div>
-    </footer>
+    <section class="example container" id="example3-container">
+        <div class="anchor" id="example3" aria-hidden="true"></div>
+        <div class="content">
+            <h2 id="example3-title">Example 3</h2>
+        </div>
+    </section>
     <script defer type="module" src="./example/index.example.js"></script>
 </body>
 

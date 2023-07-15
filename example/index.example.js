@@ -94,3 +94,27 @@ scrolling.addTrigger({
     },
   ],
 });
+
+const example3 = document.getElementById("example3-title");
+scrolling.addTrigger({
+  name: "Example 3",
+  trigger: document.getElementById("example3-container"),
+  steps: [
+    {
+      name: "Appear",
+      element: example3,
+      offset: 0,
+      duration: 20,
+      change: {
+        opacity: {
+          from: 0,
+          to: 1,
+        },
+        transform: {
+          from: "rotate(0deg)",
+          to: "rotate(-360deg)",
+        },
+      },
+    },
+  ],
+});

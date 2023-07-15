@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "scripts": {
     "watch": "parcel watch",
-    "dev": "parcel http-server -p 1337",
+    "dev": "http-server -p 1337",
     "build": "parcel build"
   },
   "devDependencies": {

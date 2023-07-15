@@ -1,0 +1,20 @@
+{
+  "name": "vanilla-scroll",
+  "version": "1.0.0",
+  "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
+  "author": "Joshua Schumacher",
+  "license": "MIT",
+  "dependencies": {},
+  "source": "src/index.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "watch": "parcel watch",
+    "dev": "parcel http-server -p 1337",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "parcel": "^2.9.3"
+  },
+  "type": "module"
+}

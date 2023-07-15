@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vanilla-scroll</title>
+
+</head>
+
+<body>
+    <style>
+        p {
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        @media (min-width: 992px) {
+            p {
+                font-size: 30px;
+            }
+        }
+
+        a.button {
+            display: inline-block;
+            padding: 0 20px;
+            white-space: nowrap;
+            color: #ffffff;
+            line-height: 50px;
+            font-size: 16px;
+            font-family: "Poppins", Arial, "serif";
+            background-color: #000000;
+            border-radius: 20px;
+            text-decoration: none;
+            box-shadow: inset 0 0 40px 20px #026279;
+            transition: box-shadow 0.2s linear;
+        }
+
+        a.button span {
+            font-style: italic;
+            font-weight: 700;
+        }
+
+        @media (min-width: 992px) {
+            a.button {
+                padding: 0 36px;
+                line-height: 70px;
+                font-size: 30px;
+            }
+        }
+
+        a.button:hover {
+            box-shadow: inset 0 0 40px 50px #026279;
+        }
+
+        :root {
+            --styles: true;
+        }
+
+        * {
+            border: 0;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            min-width: 320px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            font-family: "Poppins", Arial, "serif";
+            padding-top: 0;
+        }
+
+        @media (min-width: 992px) {
+            body {
+                padding-top: 0;
+            }
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
+        span.animate {
+            display: inline-block;
+        }
+
+        .anchor {
+            position: absolute;
+            top: 0;
+        }
+
+        @media (min-width: 992px) {
+            .anchor {
+                top: 0;
+            }
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        ul.no-style {
+            list-style: none;
+        }
+
+        .not-visible {
+            display: none;
+        }
+
+        [aria-hidden=true] {
+            visibility: visible;
+        }
+
+        input[aria-hidden=true] {
+            display: inherit;
+        }
+
+        .container {
+            width: 100%;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 576px) {
+            .container {
+                max-width: 540px;
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 720px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1320px;
+            }
+        }
+
+
+
+
+        @font-face {
+            font-family: "Poppins";
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("/fonts/poppins-v20-latin-regular.eot");
+            src: local(""), url("/fonts/poppins-v20-latin-regular.eot?#iefix") format("embedded-opentype"), url("/fonts/poppins-v20-latin-regular.woff2") format("woff2"), url("/fonts/poppins-v20-latin-regular.woff") format("woff"), url("/fonts/poppins-v20-latin-regular.ttf") format("truetype"), url("/fonts/poppins-v20-latin-regular.svg#Poppins") format("svg");
+        }
+
+        @font-face {
+            font-family: "Poppins";
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url("/fonts/poppins-v20-latin-700.eot");
+            src: local(""), url("/fonts/poppins-v20-latin-700.eot?#iefix") format("embedded-opentype"), url("/fonts/poppins-v20-latin-700.woff2") format("woff2"), url("/fonts/poppins-v20-latin-700.woff") format("woff"), url("/fonts/poppins-v20-latin-700.ttf") format("truetype"), url("/fonts/poppins-v20-latin-700.svg#Poppins") format("svg");
+        }
+
+        @font-face {
+            font-family: "icons";
+            font-style: normal;
+            font-weight: normal;
+            font-display: swap;
+            src: url("/fonts/icons.eot");
+            src: url("/fonts/icons.eot#iefix") format("embedded-opentype"), url("/fonts/icons.woff2") format("woff2"), url("/fonts/icons.woff") format("woff"), url("/fonts/icons.ttf") format("truetype"), url("/fonts/icons.svg#icons") format("svg");
+        }
+
+        .debug {
+            position: fixed;
+            left: 5%;
+            bottom: 30px;
+            width: 90%;
+            border-bottom: 2px solid #ff00ff;
+        }
+
+        .debug .indicator {
+            position: absolute;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            bottom: 0;
+            height: calc(var(--indicator-level) * 20px);
+            font-size: 12px;
+            border-left: 1px solid;
+        }
+
+        .debug .indicator::after,
+        .debug .indicator::before {
+            white-space: pre-wrap;
+            padding-left: 5px;
+        }
+
+        .debug .indicator::after {
+            content: attr(indicator-name);
+            transform: scaleX(-1);
+            opacity: 0.3;
+        }
+
+        .debug .indicator::before {
+            content: attr(indicator-name);
+        }
+
+        .debug .indicator#current-position {
+            z-index: 1;
+            bottom: -20px;
+            height: calc(var(--indicator-count) * 20px + 20px);
+            border-left-color: #ff00ff !important;
+        }
+
+        .debug .indicator#current-position::after {
+            content: none;
+        }
+
+        .debug .indicator.trigger {
+            top: 0;
+            height: 20px;
+            border: 1px solid #888888 !important;
+            border-top: 0 !important;
+        }
+
+        .debug .indicator.trigger::after {
+            color: #888888;
+        }
+
+        .debug .indicator.step {
+            border: 1px solid;
+            border-bottom: 0;
+        }
+
+        section.example {
+            margin-top: -100vh;
+        }
+
+        section.example#example1-container {
+            height: 120vh;
+        }
+
+        section.example#example2-container {
+            height: 120vh;
+        }
+
+        section.example .content {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        section.example .content h2 {
+            opacity: 0;
+            pointer-events: all;
+        }
+
+
+        section.intro {
+            height: 130vh;
+        }
+
+        section.intro .content {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        section.intro .content h1 {
+            transform: scale(1);
+            pointer-events: all;
+        }
+    </style>
+    <header>
+        <div class="inner-block"></div>
+    </header>
+    <section class="intro container" id="intro-container">
+        <div class="anchor" id="intro" aria-hidden="true"></div>
+        <div class="content">
+            <h1>Intro</h1>
+        </div>
+    </section>
+    <section class="example container" id="example1-container">
+        <div class="anchor" id="example1" aria-hidden="true"></div>
+        <div class="content">
+            <h2 id="example1-title">Example 1</h2>
+        </div>
+    </section>
+    <section class="example container" id="example2-container">
+        <div class="anchor" id="example2" aria-hidden="true"></div>
+        <div class="content">
+            <h2 id="example2-title">Example 2</h2>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-container"></div>
+    </footer>
+    <script defer type="module" src="./example/index.example.js"></script>
+</body>
+
+</html>

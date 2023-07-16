@@ -162,6 +162,7 @@ class Scrolling {
     prepareStep = (step) => {
         Object.entries(step.changes).forEach(([key, values]) => {
             if (typeof values.to === 'string' && typeof values.from === 'string') {
+                // const regex = new RegExp('(.*?)\\((\\d+(?:\.\d+)|-\\d+)(.*?)\\)');
                 const regex = new RegExp('(.*?)\\((\\d+|-\\d+)(.*?)\\)');
                 const valueStringFrom = values.from.match(regex);
                 const valueStringTo = values.to.match(regex);

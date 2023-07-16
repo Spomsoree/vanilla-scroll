@@ -10,11 +10,16 @@
   "scripts": {
     "watch": "parcel watch",
     "dev": "http-server -p 1337",
-    "build": "parcel build"
+    "build": "parcel build",
+    "tests": "start-server-and-test dev 1337 run-tests",
+    "start-server": "yarn dev",
+    "run-tests": "cypress run"
   },
   "devDependencies": {
+    "cypress": "^12.17.1",
     "http-server": "^14.1.1",
-    "parcel": "^2.9.3"
+    "parcel": "^2.9.3",
+    "start-server-and-test": "^2.0.0"
   },
   "type": "module"
 }

@@ -1,6 +1,6 @@
 import Scrolling from "../dist/index.js";
 
-const scrolling = new Scrolling();
+const scrolling = new Scrolling(process.env.DEBUG);
 scrolling.addTrigger({
   name: "Intro",
   trigger: document.getElementById("intro-container"),

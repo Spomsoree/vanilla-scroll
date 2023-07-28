@@ -5,8 +5,8 @@ const IndicatorType = Object.freeze({
 });
 
 class Scrolling {
-    constructor() {
-        this.debug = process.env.DEBUG;
+    constructor({debug}) {
+        this.debug = debug;
         this.steps = [];
 
         this.start();
@@ -31,6 +31,10 @@ class Scrolling {
     };
 
     addStepIndicator = (name, topPositionInPercent, endInPercent) => {
+        if (!this.debug) {
+            return;
+        }
+        
         const triggerIndex = this.steps.filter(step => step.start <= topPositionInPercent && step.end >= topPositionInPercent).length;
         const indicator    = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent);
 

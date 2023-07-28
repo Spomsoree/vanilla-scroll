@@ -1,0 +1,52 @@
+.debug {
+  --height: 20px;
+  position: fixed;
+  left: 5%;
+  bottom: 30px;
+  width: 90%;
+  border-bottom: 2px solid #ff00ff;
+}
+.debug .indicator {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  bottom: 0;
+  height: calc(var(--indicator-level) * var(--height));
+  font-size: 12px;
+  border-left: 1px solid;
+}
+.debug .indicator::after, .debug .indicator::before {
+  white-space: pre-wrap;
+  padding-left: 5px;
+}
+.debug .indicator::after {
+  content: attr(indicator-name);
+  transform: scaleX(-1);
+  opacity: 0.3;
+}
+.debug .indicator::before {
+  content: attr(indicator-name);
+}
+.debug .indicator#current-position {
+  z-index: 1;
+  bottom: -var(--height);
+  height: calc(var(--indicator-count) * var(--height) + var(--height));
+  border-left-color: #ff00ff !important;
+}
+.debug .indicator#current-position::after {
+  content: none;
+}
+.debug .indicator.trigger {
+  top: 0;
+  height: var(--height);
+  border: 1px solid #888888 !important;
+  border-top: 0 !important;
+}
+.debug .indicator.trigger::after {
+  color: #888888;
+}
+.debug .indicator.step {
+  border: 1px solid;
+  border-bottom: 0;
+}/*# sourceMappingURL=debug.css.map */

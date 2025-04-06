@@ -8,7 +8,6 @@
     "source": "src/index.js",
     "main": "dist/index.js",
     "scripts": {
-        "watch": "parcel watch",
         "dev": "http-server -p 1337 -c-1 -o /example/",
         "build": "rm -rf dist && parcel build",
         "build:deploy": "rm -rf dist && parcel build && node scripts/deploy.js",

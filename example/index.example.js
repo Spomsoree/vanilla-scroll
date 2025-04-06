@@ -6,7 +6,7 @@ scrolling.addTrigger({
     trigger: document.getElementById('intro-container'),
     steps: [
         {
-            name: 'Scale',
+            name: 'Scale up',
             element: document.querySelector('h1'),
             offset: 0,
             duration: 30,
@@ -20,8 +20,8 @@ scrolling.addTrigger({
         {
             name: 'Blur',
             element: document.querySelector('h1'),
-            offset: 20,
-            duration: 10,
+            offset: 5,
+            duration: 25,
             change: {
                 filter: {
                     from: 'blur(0px)',
@@ -30,7 +30,7 @@ scrolling.addTrigger({
             },
         },
         {
-            name: 'Opacity',
+            name: 'Fade out',
             element: document.querySelector('h1'),
             offset: 30,
             duration: 30,
@@ -50,7 +50,7 @@ scrolling.addTrigger({
     trigger: document.getElementById('example1-container'),
     steps: [
         {
-            name: 'Bye',
+            name: 'Fade In',
             element: example1,
             offset: 10,
             duration: 10,
@@ -62,7 +62,7 @@ scrolling.addTrigger({
             },
         },
         {
-            name: 'Bye',
+            name: 'Fade out',
             element: example1,
             offset: 90,
             duration: 10,
@@ -101,15 +101,23 @@ scrolling.addTrigger({
     trigger: document.getElementById('example3-container'),
     steps: [
         {
-            name: 'Appear',
+            name: 'Rotate appear',
             element: example3,
             offset: 0,
-            duration: 20,
+            duration: 60,
             change: {
                 opacity: {
                     from: 0,
                     to: 1,
                 },
+            },
+        },
+        {
+            name: 'Rotate appear',
+            element: example3,
+            offset: 10,
+            duration: 40,
+            change: {
                 transform: {
                     from: 'rotate(0deg)',
                     to: 'rotate(-360deg)',

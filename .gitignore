@@ -1,3 +1,5 @@
-dist
+.idea/
+dist/
 .parcel-cache
-node_modules
+node_modules/
+cypress/videos/

@@ -1,25 +1,23 @@
 {
-  "name": "vanilla-scroll",
-  "version": "1.0.0",
-  "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
-  "author": "Joshua Schumacher",
-  "license": "MIT",
-  "dependencies": {},
-  "source": "src/index.js",
-  "main": "dist/index.js",
-  "scripts": {
-    "watch": "parcel watch",
-    "dev": "http-server -p 1337",
-    "build": "parcel build",
-    "tests": "start-server-and-test dev 1337 run-tests",
-    "start-server": "yarn dev",
-    "run-tests": "cypress run"
-  },
-  "devDependencies": {
-    "cypress": "^12.17.1",
-    "http-server": "^14.1.1",
-    "parcel": "^2.9.3",
-    "start-server-and-test": "^2.0.0"
-  },
-  "type": "module"
+    "name": "vanilla-scroll",
+    "version": "1.0.0",
+    "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
+    "author": "Joshua Schumacher",
+    "license": "MIT",
+    "dependencies": {},
+    "source": "src/index.js",
+    "main": "dist/index.js",
+    "scripts": {
+        "watch": "parcel watch",
+        "dev": "http-server -p 1337 -c-1 -o /example/",
+        "build": "rm -rf dist && parcel build",
+        "build:deploy": "rm -rf dist && parcel build && node scripts/deploy.js",
+        "test": "http-server . -p 1337 -c-1 --silent & (sleep 2 && cypress run); kill $!"
+    },
+    "devDependencies": {
+        "cypress": "^12.17.1",
+        "http-server": "^14.1.1",
+        "parcel": "^2.9.3"
+    },
+    "type": "module"
 }

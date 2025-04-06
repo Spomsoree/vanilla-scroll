@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [ 21.x ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+            -   name: Use Node.js ${{ matrix.node-version }}
+                uses: actions/setup-node@v3
+                with:
+                    node-version: ${{ matrix.node-version }}
+            -   run: yarn --frozen-lockfile
+            -   run: yarn build
+            -   run: yarn tests
+            -   run: yarn build:deploy
+            -
+                name: Deploy
+                uses: burnett01/rsync-deployments@5.2.1
+                with:
+                    switches:    -avzr --delete
+                    path:        ./dist/
+                    remote_path: ${{ secrets.SSH_PATH }}
+                    remote_host: ${{ secrets.SSH_HOST }}
+                    remote_user: ${{ secrets.SSH_USER }}
+                    remote_key:  ${{ secrets.SSH_KEY }}

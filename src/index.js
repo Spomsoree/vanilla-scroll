@@ -5,7 +5,7 @@ const IndicatorType = Object.freeze({
 });
 
 class Scrolling {
-    constructor({debug}) {
+    constructor({ debug }) {
         this.debug = debug;
         this.steps = [];
 
@@ -34,7 +34,7 @@ class Scrolling {
         if (!this.debug) {
             return;
         }
-        
+
         const triggerIndex = this.steps.filter(step => step.start <= topPositionInPercent && step.end >= topPositionInPercent).length;
         const indicator    = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent);
 
@@ -167,11 +167,11 @@ class Scrolling {
         Object.entries(step.changes).forEach(([key, values]) => {
             if (typeof values.to === 'string' && typeof values.from === 'string') {
                 // const regex = new RegExp('(.*?)\\((\\d+(?:\.\d+)|-\\d+)(.*?)\\)');
-                const regex = new RegExp('(.*?)(-?\\d+)(.*)');
-                const valueStringFrom = values.from.match(regex);
-                const valueStringTo = values.to.match(regex);
-                step.changes[key].from = parseInt(valueStringFrom[2], 10);
-                step.changes[key].to = parseInt(valueStringTo[2], 10);
+                const regex              = new RegExp('(.*?)(-?\\d+)(.*)');
+                const valueStringFrom    = values.from.match(regex);
+                const valueStringTo      = values.to.match(regex);
+                step.changes[key].from   = parseInt(valueStringFrom[2], 10);
+                step.changes[key].to     = parseInt(valueStringTo[2], 10);
                 step.changes[key].prefix = valueStringTo[1];
                 step.changes[key].suffix = valueStringTo[3];
             }
@@ -203,16 +203,16 @@ class Scrolling {
         this.addTriggerIndicator(trigger.name, triggerTopPositionInPercent, triggerHeightInPercent);
 
         trigger.steps
-            .sort((a, b) => a.offset - b.offset)
-            .forEach((step) => {
-                const stepTopPositionInPercent = step.offset * triggerHeightInPercent / 100 + triggerTopPositionInPercent;
-                const stepHeightInPercent      = step.duration * triggerHeightInPercent / 100;
+               .sort((a, b) => a.offset - b.offset)
+               .forEach((step) => {
+                   const stepTopPositionInPercent = step.offset * triggerHeightInPercent / 100 + triggerTopPositionInPercent;
+                   const stepHeightInPercent      = step.duration * triggerHeightInPercent / 100;
 
-                this.addStep(stepTopPositionInPercent, stepTopPositionInPercent + stepHeightInPercent, step.element, step.change);
-                this.addStepIndicator(step.name, stepTopPositionInPercent, stepHeightInPercent);
-            })
+                   this.addStep(stepTopPositionInPercent, stepTopPositionInPercent + stepHeightInPercent, step.element, step.change);
+                   this.addStepIndicator(step.name, stepTopPositionInPercent, stepHeightInPercent);
+               })
         ;
     };
 }
 
-export default Scrolling
+export default Scrolling;

@@ -32,7 +32,7 @@ scrolling.addTrigger({
         {
             name: 'Fade out',
             element: document.querySelector('h1'),
-            offset: 30,
+            offset: 20,
             duration: 30,
             change: {
                 opacity: {
@@ -101,7 +101,7 @@ scrolling.addTrigger({
     trigger: document.getElementById('example3-container'),
     steps: [
         {
-            name: 'Rotate appear',
+            name: 'Appear',
             element: example3,
             offset: 0,
             duration: 60,
@@ -113,7 +113,7 @@ scrolling.addTrigger({
             },
         },
         {
-            name: 'Rotate appear',
+            name: 'Rotate',
             element: example3,
             offset: 10,
             duration: 40,

@@ -17,6 +17,7 @@
 .debug .indicator
 {
     position:        absolute;
+    z-index:         calc(-1 * var(--indicator-level));
     display:         flex;
     align-items:     flex-start;
     justify-content: space-between;

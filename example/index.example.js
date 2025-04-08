@@ -97,6 +97,18 @@ scrolling.addTrigger({
                 },
             },
         },
+        {
+            name: 'Disappear',
+            element: example2,
+            offset: 80,
+            duration: 10,
+            change: {
+                opacity: {
+                    from: 1,
+                    to: 0,
+                },
+            },
+        },
     ],
 });
 

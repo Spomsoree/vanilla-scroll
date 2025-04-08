@@ -8,9 +8,9 @@
 {
     --height:      20px;
     position:      fixed;
-    left:          5%;
+    left:          5vw;
     bottom:        30px;
-    width:         90%;
+    width:         90vw;
     border-bottom: 2px solid #f0f;
 }
 

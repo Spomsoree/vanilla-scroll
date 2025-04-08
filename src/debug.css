@@ -27,18 +27,18 @@
     overflow:        hidden;
 }
 
-.debug .indicator::after,
-.debug .indicator::before
+.debug .indicator:hover
 {
-    white-space:  nowrap;
-    padding-left: 5px;
+    overflow: visible;
 }
 
-.debug .indicator::after
+.debug .indicator::before
 {
-    content:   attr(indicator-name);
-    transform: scaleX(-1);
-    opacity:   0.3;
+    display:      inline-flex;
+    align-items:  center;
+    height:       var(--height);
+    white-space:  nowrap;
+    padding-left: 5px;
 }
 
 .debug .indicator::before

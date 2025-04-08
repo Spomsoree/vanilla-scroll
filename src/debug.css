@@ -24,12 +24,13 @@
     height:          calc(var(--indicator-level) * var(--height));
     font-size:       12px;
     border-left:     1px solid;
+    overflow:        hidden;
 }
 
 .debug .indicator::after,
 .debug .indicator::before
 {
-    white-space:  pre-wrap;
+    white-space:  nowrap;
     padding-left: 5px;
 }
 

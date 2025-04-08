@@ -126,3 +126,5 @@ scrolling.addTrigger({
         },
     ],
 });
+
+scrolling.build();

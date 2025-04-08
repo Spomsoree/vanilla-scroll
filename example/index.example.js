@@ -1,13 +1,15 @@
 import Scrolling from '../dist/index.js';
 
 const scrolling = new Scrolling({ debug: true });
+const headline  = document.querySelector('h1');
+
 scrolling.addTrigger({
     name: 'Intro',
     trigger: document.getElementById('intro-container'),
     steps: [
         {
             name: 'Scale up',
-            element: document.querySelector('h1'),
+            element: headline,
             offset: 0,
             duration: 30,
             change: {
@@ -19,7 +21,7 @@ scrolling.addTrigger({
         },
         {
             name: 'Blur',
-            element: document.querySelector('h1'),
+            element: headline,
             offset: 5,
             duration: 25,
             change: {
@@ -31,7 +33,7 @@ scrolling.addTrigger({
         },
         {
             name: 'Fade out',
-            element: document.querySelector('h1'),
+            element: headline,
             offset: 20,
             duration: 30,
             change: {
@@ -45,6 +47,7 @@ scrolling.addTrigger({
 });
 
 const example1 = document.getElementById('example1-title');
+
 scrolling.addTrigger({
     name: 'Example 1',
     trigger: document.getElementById('example1-container'),
@@ -64,8 +67,8 @@ scrolling.addTrigger({
         {
             name: 'Fade out',
             element: example1,
-            offset: 90,
-            duration: 10,
+            offset: 80,
+            duration: 20,
             change: {
                 opacity: {
                     from: 1,
@@ -75,7 +78,9 @@ scrolling.addTrigger({
         },
     ],
 });
+
 const example2 = document.getElementById('example2-title');
+
 scrolling.addTrigger({
     name: 'Example 2',
     trigger: document.getElementById('example2-container'),
@@ -96,6 +101,7 @@ scrolling.addTrigger({
 });
 
 const example3 = document.getElementById('example3-title');
+
 scrolling.addTrigger({
     name: 'Example 3',
     trigger: document.getElementById('example3-container'),

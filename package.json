@@ -18,5 +18,10 @@
         "http-server": "^14.1.1",
         "parcel": "^2.9.3"
     },
-    "type": "module"
+    "type": "module",
+    "targets": {
+        "main": {
+            "optimize": true
+        }
+    }
 }

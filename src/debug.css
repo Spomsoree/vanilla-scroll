@@ -48,8 +48,8 @@
 .debug .indicator#current-position
 {
     z-index:           1;
-    bottom:            var(--height);
-    height:            calc(var(--indicator-count) * var(--height) + var(--height));
+    bottom:            0;
+    height:            calc(var(--indicator-count) * var(--height));
     border-left-color: #f0f !important;
 }
 

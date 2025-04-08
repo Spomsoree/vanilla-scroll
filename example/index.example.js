@@ -23,7 +23,7 @@ scrolling.addTrigger({
             name: 'Blur',
             element: headline,
             offset: 5,
-            duration: 25,
+            duration: 35,
             change: {
                 filter: {
                     from: 'blur(0px)',
@@ -121,11 +121,23 @@ scrolling.addTrigger({
         {
             name: 'Appear',
             element: example3,
-            offset: 0,
-            duration: 60,
+            offset: 30,
+            duration: 30,
             change: {
                 opacity: {
                     from: 0,
+                    to: .5,
+                },
+            },
+        },
+        {
+            name: 'Appear',
+            element: example3,
+            offset: 60,
+            duration: 10,
+            change: {
+                opacity: {
+                    from: .5,
                     to: 1,
                 },
             },
@@ -134,7 +146,7 @@ scrolling.addTrigger({
             name: 'Rotate',
             element: example3,
             offset: 10,
-            duration: 40,
+            duration: 50,
             change: {
                 transform: {
                     from: 'rotate(0deg)',

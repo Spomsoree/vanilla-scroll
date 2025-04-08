@@ -1,5 +1,6 @@
 :root
 {
+    --trigger-count:   0;
     --indicator-count: 0;
     --indicator-level: 0;
 }
@@ -9,7 +10,7 @@
     --height:      20px;
     position:      fixed;
     left:          5vw;
-    bottom:        30px;
+    bottom:         calc(var(--trigger-count) * var(--height));
     width:         90vw;
     height:        2px;
     border-bottom: 2px solid #f0f;
@@ -31,6 +32,7 @@
     height:          calc(var(--indicator-level) * var(--height));
     font-size:       12px;
     overflow:        hidden;
+    pointer-events:  none;
 }
 
 .debug .indicator::before
@@ -42,12 +44,14 @@
     padding-left:     5px;
     padding-right:    5px;
     background-color: #fff;
+    pointer-events:   all;
 }
 
 .debug .indicator::after
 {
     content:  '';
     position: absolute;
+    z-index:  -1;
     height:   calc(100% - 2px);
     width:    calc(100% - 2px);
     border:   1px solid #fff;
@@ -89,7 +93,7 @@
 .debug .indicator.trigger
 {
     top:           2px;
-    height:        var(--height);
+    height:        calc(var(--indicator-level) * var(--height));
     border:        1px solid #888;
     border-top:    0;
     border-radius: 0 0 2px 2px;
@@ -97,6 +101,7 @@
 
 .debug .indicator.trigger::before
 {
+    margin-top:    auto;
     border-radius: 0 0 1px 1px;
 }
 

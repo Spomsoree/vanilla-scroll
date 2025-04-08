@@ -6,15 +6,14 @@ const IndicatorType = Object.freeze({
 
 class Scrolling {
     constructor({ debug }) {
-        this.debug      = debug;
-        this.steps      = [];
-        this.triggers   = [];
-        this.colorIndex = 0;
+        this.debug    = debug;
+        this.steps    = [];
+        this.triggers = [];
 
         this.start();
     }
 
-    addIndicator = (type, name, topPositionInPercent, endInPercent, triggerIndex) => {
+    addIndicator = (type, name, topPositionInPercent, endInPercent) => {
         if (!this.debug) {
             return;
         }
@@ -39,20 +38,38 @@ class Scrolling {
             return;
         }
 
-        const triggerIndex = this.steps.filter(step => step.start <= topPositionInPercent && step.end >= topPositionInPercent).length;
-        const indicator    = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent, triggerIndex);
+        const indicator                        = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent);
+        const freeFoundIndex                   = this.stepDebugIndexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
+        const lowestFreeIndex                  = freeFoundIndex === -1 ? this.stepDebugIndexes.length : freeFoundIndex;
+        this.stepDebugIndexes[lowestFreeIndex] = topPositionInPercent + endInPercent;
 
-        if (triggerIndex > this.maxTriggerIndex) {
-            this.maxTriggerIndex = triggerIndex;
+        if (lowestFreeIndex > this.maxStepIndex) {
+            this.maxStepIndex = lowestFreeIndex;
         }
 
-        indicator.style.setProperty('--indicator-level', `${triggerIndex}`);
-        this.debugElement.style.setProperty('--indicator-count', `${this.maxTriggerIndex + 1}`);
+        indicator.style.setProperty('--indicator-level', `${lowestFreeIndex + 1}`);
+        this.debugElement.style.setProperty('--indicator-count', `${this.maxStepIndex + 2}`);
 
         return indicator;
     };
 
-    addTriggerIndicator = (name, topPositionInPercent, endInPercent) => this.addIndicator(IndicatorType.trigger, name, topPositionInPercent, endInPercent);
+    addTriggerIndicator = (name, topPositionInPercent, endInPercent) => {
+        if (!this.debug) {
+            return;
+        }
+
+        const indicator                           = this.addIndicator(IndicatorType.trigger, name, topPositionInPercent, endInPercent);
+        const freeFoundIndex                      = this.triggerDebugIndexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
+        const lowestFreeIndex                     = freeFoundIndex === -1 ? this.triggerDebugIndexes.length : freeFoundIndex;
+        this.triggerDebugIndexes[lowestFreeIndex] = topPositionInPercent + endInPercent;
+
+        if (lowestFreeIndex > this.maxTriggerIndex) {
+            this.maxTriggerIndex = lowestFreeIndex;
+        }
+
+        indicator.style.setProperty('--indicator-level', `${lowestFreeIndex + 1}`);
+        this.debugElement.style.setProperty('--trigger-count', `${this.maxTriggerIndex + 2}`);
+    };
 
     addCurrentPositionIndicator = () => {
         const indicator = this.addIndicator(IndicatorType.currentPosition);
@@ -69,7 +86,7 @@ class Scrolling {
             debug.classList.add('debug');
             document.body.appendChild(debug);
 
-            this.maxTriggerIndex = 0;
+            this.maxStepIndex    = 0;
             this.debugElement    = debug;
             this.currentPosition = this.addCurrentPositionIndicator();
         }
@@ -85,17 +102,9 @@ class Scrolling {
     };
 
     calculateInRangeSteps = (values, step) => {
-        return (
-            values.from + (
-                (
-                    values.to - values.from
-                ) * (
-                    this.percentage - step.start
-                ) / (
-                    step.end - step.start
-                )
-            )
-        );
+        return (values.from + (
+            (values.to - values.from) * (this.percentage - step.start) / (step.end - step.start)
+        ));
     };
 
     calculateTick = (step, calculationFunction) => {
@@ -208,12 +217,16 @@ class Scrolling {
                 this.debugElement.appendChild(currentPosition);
             }
 
-            this.maxTriggerIndex = 0;
+            this.colorIndex          = 0;
+            this.maxStepIndex        = 0;
+            this.maxTriggerIndex     = 0;
+            this.stepDebugIndexes    = [];
+            this.triggerDebugIndexes = [];
         }
 
         this.steps = [];
 
-        const triggersWithPositions = this.triggers.map(trigger => {
+        const triggersWithPositions = this.triggers.map((trigger) => {
             const triggerElement              = trigger.trigger;
             const rect                        = triggerElement.getBoundingClientRect();
             const triggerTopPositionInPercent = ((rect.top + window.scrollY) / this.scrollHeight) * 100;
@@ -267,17 +280,7 @@ class Scrolling {
             allStepsInfo = allStepsInfo.concat(stepsFromTrigger);
         });
 
-        allStepsInfo.sort((a, b) => {
-            if (a.start !== b.start) {
-                return a.start - b.start;
-            }
-
-            if (a.end !== b.end) {
-                return a.end - b.end;
-            }
-
-            return b.zIndex - a.zIndex;
-        });
+        allStepsInfo.sort((a, b) => a.start - b.start);
 
         allStepsInfo.forEach(stepInfo => {
             this.addStep(stepInfo.start, stepInfo.end, stepInfo.element, stepInfo.changes);

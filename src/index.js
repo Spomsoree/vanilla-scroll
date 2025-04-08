@@ -6,9 +6,10 @@ const IndicatorType = Object.freeze({
 
 class Scrolling {
     constructor({ debug }) {
-        this.debug    = debug;
-        this.steps    = [];
-        this.triggers = [];
+        this.debug      = debug;
+        this.steps      = [];
+        this.triggers   = [];
+        this.colorIndex = 0;
 
         this.start();
     }
@@ -18,12 +19,14 @@ class Scrolling {
             return;
         }
 
+        this.colorIndex++;
+
         const indicator = document.createElement('div');
 
         indicator.setAttribute('indicator-name', name);
         indicator.style.setProperty('left', `${topPositionInPercent}%`);
-        indicator.style.setProperty('width', `calc(${endInPercent}% + 1px)`);
-        indicator.style.setProperty('border-color', `hsl(${((triggerIndex * 137.508) % 360)}, 70%, 50%)`);
+        indicator.style.setProperty('width', `${endInPercent}%`);
+        indicator.style.setProperty('border-color', `hsl(${((this.colorIndex * 137.508) % 360)}, 70%, 50%)`);
         indicator.classList.add(type);
         indicator.classList.add('indicator');
         this.debugElement.appendChild(indicator);
@@ -211,15 +214,11 @@ class Scrolling {
         this.steps = [];
 
         const triggersWithPositions = this.triggers.map(trigger => {
-            const triggerElement = trigger.trigger;
-            const rect           = triggerElement.getBoundingClientRect();
-
-            const triggerTopPositionInPercent = (
-                (rect.top + window.scrollY) / this.scrollHeight
-            ) * 100;
-
-            const triggerHeightInPercent = triggerElement.offsetHeight / this.scrollHeight * 100;
-            const zIndex                 = parseInt(window.getComputedStyle(triggerElement).zIndex) || 0;
+            const triggerElement              = trigger.trigger;
+            const rect                        = triggerElement.getBoundingClientRect();
+            const triggerTopPositionInPercent = ((rect.top + window.scrollY) / this.scrollHeight) * 100;
+            const triggerHeightInPercent      = triggerElement.offsetHeight / this.scrollHeight * 100;
+            const zIndex                      = parseInt(window.getComputedStyle(triggerElement).zIndex) || 0;
 
             return {
                 trigger,
@@ -233,6 +232,7 @@ class Scrolling {
             if (a.topPosition + a.height <= b.topPosition) {
                 return -1;
             }
+
             if (b.topPosition + b.height <= a.topPosition) {
                 return 1;
             }
@@ -251,9 +251,7 @@ class Scrolling {
             const stepsFromTrigger = trigger.steps.map(step => {
                 const stepTopPositionInPercent = step.offset * triggerHeightInPercent / 100 + triggerTopPositionInPercent;
                 const stepHeightInPercent      = step.duration * triggerHeightInPercent / 100;
-
-                const stepZIndex = step.element ?
-                    (parseInt(window.getComputedStyle(step.element).zIndex) || 0) : 0;
+                const stepZIndex               = step.element ? (parseInt(window.getComputedStyle(step.element).zIndex) || 0) : 0;
 
                 return {
                     name:        step.name,
@@ -283,8 +281,7 @@ class Scrolling {
 
         allStepsInfo.forEach(stepInfo => {
             this.addStep(stepInfo.start, stepInfo.end, stepInfo.element, stepInfo.changes);
-            this.addStepIndicator(`${stepInfo.name} (${stepInfo.triggerName})`,
-                stepInfo.start, stepInfo.end - stepInfo.start);
+            this.addStepIndicator(`${stepInfo.name} (${stepInfo.triggerName})`, stepInfo.start, stepInfo.end - stepInfo.start);
         });
 
         this.calculateBounds();

@@ -11,7 +11,13 @@
     left:          5vw;
     bottom:        30px;
     width:         90vw;
+    height:        2px;
     border-bottom: 2px solid #f0f;
+}
+
+.debug *
+{
+    box-sizing: border-box;
 }
 
 .debug .indicator
@@ -24,22 +30,33 @@
     bottom:          0;
     height:          calc(var(--indicator-level) * var(--height));
     font-size:       12px;
-    border-left:     1px solid;
     overflow:        hidden;
-}
-
-.debug .indicator:hover
-{
-    overflow: visible;
 }
 
 .debug .indicator::before
 {
-    display:      inline-flex;
-    align-items:  center;
-    height:       var(--height);
-    white-space:  nowrap;
-    padding-left: 5px;
+    height:           calc(var(--height) - 1px);
+    display:          inline-flex;
+    align-items:      center;
+    white-space:      nowrap;
+    padding-left:     5px;
+    padding-right:    5px;
+    background-color: #fff;
+}
+
+.debug .indicator::after
+{
+    content:  '';
+    position: absolute;
+    height:   calc(100% - 2px);
+    width:    calc(100% - 2px);
+    border:   1px solid #fff;
+}
+
+.debug .indicator:hover
+{
+    z-index:  9999999;
+    overflow: visible;
 }
 
 .debug .indicator::before
@@ -49,32 +66,48 @@
 
 .debug .indicator#current-position
 {
-    z-index:           1;
-    bottom:            0;
-    height:            calc(var(--indicator-count) * var(--height));
-    border-left-color: #f0f !important;
+    z-index:        1;
+    bottom:         0;
+    height:         calc(var(--indicator-count) * var(--height));
+    border-top:     1px solid transparent;
+    border-left:    1px solid #f0f;
+    border-radius:  2px 0 0 0;
+    pointer-events: none;
+}
+
+.debug .indicator#current-position::before
+{
+    border-radius:  1px 1px 1px 0;
+    pointer-events: all;
 }
 
 .debug .indicator#current-position::after
 {
-    content: none;
+    border-right: none;
 }
 
 .debug .indicator.trigger
 {
-    top:        0;
-    height:     var(--height);
-    border:     1px solid #888 !important;
-    border-top: 0 !important;
+    top:           2px;
+    height:        var(--height);
+    border:        1px solid #888;
+    border-top:    0;
+    border-radius: 0 0 2px 2px;
 }
 
-.debug .indicator.trigger::after
+.debug .indicator.trigger::before
 {
-    color: #888;
+    border-radius: 0 0 1px 1px;
 }
 
 .debug .indicator.step
 {
     border:        1px solid;
     border-bottom: 0;
+    border-radius: 2px 2px 0 0;
+}
+
+.debug .indicator.step::before
+{
+    border-radius: 1px 1px 0 0;
 }

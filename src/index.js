@@ -13,7 +13,7 @@ class Scrolling {
         this.start();
     }
 
-    addIndicator = (type, name, topPositionInPercent, endInPercent) => {
+    addIndicator = (type, name, topPositionInPercent, endInPercent, triggerIndex) => {
         if (!this.debug) {
             return;
         }
@@ -23,7 +23,7 @@ class Scrolling {
         indicator.setAttribute('indicator-name', name);
         indicator.style.setProperty('left', `${topPositionInPercent}%`);
         indicator.style.setProperty('width', `calc(${endInPercent}% + 1px)`);
-        indicator.style.setProperty('border-color', `#${Math.floor(Math.random() * 16777215).toString(16)}`);
+        indicator.style.setProperty('border-color', `hsl(${((triggerIndex * 137.508) % 360)}, 70%, 50%)`);
         indicator.classList.add(type);
         indicator.classList.add('indicator');
         this.debugElement.appendChild(indicator);
@@ -37,7 +37,7 @@ class Scrolling {
         }
 
         const triggerIndex = this.steps.filter(step => step.start <= topPositionInPercent && step.end >= topPositionInPercent).length;
-        const indicator    = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent);
+        const indicator    = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent, triggerIndex);
 
         if (triggerIndex > this.maxTriggerIndex) {
             this.maxTriggerIndex = triggerIndex;

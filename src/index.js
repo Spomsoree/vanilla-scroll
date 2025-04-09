@@ -93,7 +93,7 @@ class Scrolling {
     };
 
     updateCurrentPosition = () => {
-        if (this.currentPosition) {
+        if (this.debug && this.currentPosition) {
             const percentage                = this.percentage.toFixed(2);
             this.currentPosition.style.left = `${percentage}%`;
 
@@ -269,7 +269,7 @@ class Scrolling {
                 return {
                     name:        step.name,
                     start:       stepTopPositionInPercent,
-                    end:         stepTopPositionInPercent + stepHeightInPercent,
+                    end:         Math.floor(stepTopPositionInPercent + stepHeightInPercent),
                     element:     step.element,
                     changes:     step.change,
                     zIndex:      stepZIndex,

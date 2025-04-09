@@ -122,7 +122,7 @@ scrolling.addTrigger({
             name: 'Appear',
             element: example3,
             offset: 30,
-            duration: 30,
+            duration: 40,
             change: {
                 opacity: {
                     from: 0,
@@ -133,8 +133,8 @@ scrolling.addTrigger({
         {
             name: 'Appear',
             element: example3,
-            offset: 60,
-            duration: 10,
+            offset: 70,
+            duration: 30,
             change: {
                 opacity: {
                     from: .5,

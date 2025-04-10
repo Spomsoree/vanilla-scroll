@@ -217,7 +217,7 @@ class Scrolling {
 
             return {
                 trigger,
-                color:       `hsl(${Math.round((colorIndex * 137.508) % 360)}, 70%, 50%)`,
+                color:       `hsl(${Math.round((colorIndex * 137) % 360)}, 70%, 50%)`,
                 topPosition: triggerTopPositionInPercent,
                 height:      triggerHeightInPercent,
             };

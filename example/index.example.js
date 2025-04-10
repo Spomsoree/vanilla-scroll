@@ -11,7 +11,7 @@ scrolling.addTrigger({
             name: 'Scale up',
             element: headline,
             offset: 0,
-            duration: 30,
+            duration: 10,
             change: {
                 transform: {
                     from: 'scale(1)',
@@ -22,8 +22,8 @@ scrolling.addTrigger({
         {
             name: 'Blur',
             element: headline,
-            offset: 5,
-            duration: 35,
+            offset: 3,
+            duration: 10,
             change: {
                 filter: {
                     from: 'blur(0px)',
@@ -34,8 +34,8 @@ scrolling.addTrigger({
         {
             name: 'Fade out',
             element: headline,
-            offset: 20,
-            duration: 30,
+            offset: 8,
+            duration: 8,
             change: {
                 opacity: {
                     from: 1,

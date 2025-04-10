@@ -76,7 +76,7 @@ class Scrolling {
             IndicatorType.currentPosition,
             null,
             document.documentElement.scrollTop,
-            (this.clientHeight / this.scrollHeight) * 100,
+            this.getCurrentPositionWidth(),
         );
 
         this.currentPosition.setAttribute('id', IndicatorType.currentPosition);
@@ -154,11 +154,19 @@ class Scrolling {
         this.calculatePercentage();
     };
 
+    getCurrentPositionWidth = () => (this.clientHeight / this.scrollHeight) * 100;
+    resizeCurrentPosition   = () => this.currentPosition.style.setProperty('width', `${this.getCurrentPositionWidth()}%`);
+
+    onResize = () => {
+        this.calculateBounds();
+        this.resizeCurrentPosition();
+    };
+
     onScroll = () => this.calculatePercentage();
 
     start = () => {
         this.calculateBounds();
-        window.addEventListener('resize', this.calculateBounds);
+        window.addEventListener('resize', this.onResize);
         window.addEventListener('scroll', this.onScroll);
         this.addDebug();
     };

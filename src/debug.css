@@ -1,4 +1,4 @@
-.debug
+.vanilla-scroll-debug
 {
     --height:                20px;
     --step-level:            0;
@@ -10,97 +10,90 @@
     --timeline-border-width: calc(var(--border-width) / 2);
 
     position:                fixed;
+    z-index:                 9999998;
     left:                    5vw;
     bottom:                  calc(var(--trigger-count) * var(--height));
     width:                   90vw;
     border-top:              var(--timeline-border-width) solid #f0f;
     border-bottom:           var(--timeline-border-width) solid #f0f;
-}
+    box-sizing:              border-box;
 
-.debug *
-{
-    box-sizing: border-box;
-}
+    .indicator
+    {
+        position:        absolute;
+        z-index:         calc(-1 * var(--step-level));
+        display:         flex;
+        align-items:     flex-start;
+        justify-content: space-between;
+        bottom:          0;
+        height:          calc(var(--step-level) * var(--height));
+        color:           #000;
+        font-size:       calc(var(--height) * .6);
+        overflow:        hidden;
+        pointer-events:  none;
 
-.debug .indicator
-{
-    position:        absolute;
-    z-index:         calc(-1 * var(--step-level));
-    display:         flex;
-    align-items:     flex-start;
-    justify-content: space-between;
-    bottom:          0;
-    height:          calc(var(--step-level) * var(--height));
-    color:           #000;
-    font-size:       calc(var(--height) * .6);
-    overflow:        hidden;
-    pointer-events:  none;
-}
+        &::before
+        {
+            content:          attr(indicator-name);
+            height:           calc(var(--height) - var(--border-width));
+            display:          inline-flex;
+            align-items:      center;
+            white-space:      nowrap;
+            padding-left:     5px;
+            padding-right:    5px;
+            background-color: #fff;
+            pointer-events:   all;
+        }
 
-.debug .indicator::before
-{
-    height:           calc(var(--height) - var(--border-width));
-    display:          inline-flex;
-    align-items:      center;
-    white-space:      nowrap;
-    padding-left:     5px;
-    padding-right:    5px;
-    background-color: #fff;
-    pointer-events:   all;
-}
+        &:hover
+        {
+            z-index:  9999999;
+            overflow: visible;
+        }
 
-.debug .indicator:hover
-{
-    z-index:  9999999;
-    overflow: visible;
-}
+        &#current-position
+        {
+            z-index:        1;
+            bottom:         0;
+            height:         calc(var(--step-count) * var(--height));
+            border:         var(--border-width) solid #f0f;
+            border-bottom:  none;
+            border-radius:  var(--border-radius) var(--border-radius) 0 0;
+            pointer-events: none;
 
-.debug .indicator::before
-{
-    content: attr(indicator-name);
-}
+            &::before
+            {
+                border-radius:  var(--inner-border-radius) var(--inner-border-radius) var(--inner-border-radius) 0;
+                pointer-events: all;
+            }
+        }
 
-.debug .indicator#current-position
-{
-    z-index:        1;
-    bottom:         0;
-    height:         calc(var(--step-count) * var(--height));
-    border:         var(--border-width) solid #f0f;
-    border-bottom:  none;
-    border-radius:  var(--border-radius) var(--border-radius) 0 0;
-    pointer-events: none;
-}
+        &.trigger
+        {
+            top:           var(--timeline-border-width);
+            height:        calc(var(--step-level) * var(--height));
+            border:        var(--border-width) solid #888;
+            border-top:    0;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
 
-.debug .indicator#current-position::before
-{
-    border-radius:  var(--inner-border-radius) var(--inner-border-radius) var(--inner-border-radius) 0;
-    pointer-events: all;
-}
+            &::before
+            {
+                margin-top:    auto;
+                border-radius: 0 0 var(--inner-border-radius) var(--inner-border-radius);
+            }
+        }
 
-.debug .indicator.trigger
-{
-    top:           var(--timeline-border-width);
-    height:        calc(var(--step-level) * var(--height));
-    border:        var(--border-width) solid #888;
-    border-top:    0;
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
-}
+        &.step
+        {
+            bottom:        var(--timeline-border-width);
+            border:        var(--border-width) solid;
+            border-bottom: 0;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
 
-.debug .indicator.trigger::before
-{
-    margin-top:    auto;
-    border-radius: 0 0 var(--inner-border-radius) var(--inner-border-radius);
-}
-
-.debug .indicator.step
-{
-    bottom:        var(--timeline-border-width);
-    border:        var(--border-width) solid;
-    border-bottom: 0;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-}
-
-.debug .indicator.step::before
-{
-    border-radius: var(--inner-border-radius) var(--inner-border-radius) 0 0;
+            &::before
+            {
+                border-radius: var(--inner-border-radius) var(--inner-border-radius) 0 0;
+            }
+        }
+    }
 }

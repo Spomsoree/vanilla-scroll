@@ -81,7 +81,7 @@ class Scrolling {
         if (this.debug) {
             const debug = document.createElement('div');
 
-            debug.classList.add('debug');
+            debug.classList.add('vanilla-scroll-debug');
             document.body.appendChild(debug);
 
             this.maxStepIndex    = 0;

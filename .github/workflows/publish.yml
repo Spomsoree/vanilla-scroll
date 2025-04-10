@@ -1,0 +1,45 @@
+name: Publish
+
+on:
+    release:
+        types:
+            - published
+    push:
+        tags:
+            - '*.*.*'
+    pull_request:
+        types:
+            - opened
+            - edited
+            - reopened
+            - synchronize
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            id-token: write
+        strategy:
+            matrix:
+                node-version: [ 21.x ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+            -   name: Use Node.js ${{ matrix.node-version }}
+                uses: actions/setup-node@v3
+                with:
+                    node-version: ${{ matrix.node-version }}
+                    registry-url: 'https://registry.npmjs.org'
+            -   run: yarn --frozen-lockfile
+            -   run: yarn build
+            -   run: yarn test
+            -   name: Setup .npmrc file
+                run:  |
+                      echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+                      echo "registry=https://registry.npmjs.org/" >> .npmrc
+                      echo "@spomsoree:registry=https://registry.npmjs.org/" >> .npmrc
+                env:
+                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+            -   name: Publish package
+                run:  npm publish --provenance --access public

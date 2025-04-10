@@ -67,7 +67,7 @@ scrolling.addTrigger({
         {
             name: 'Fade out',
             element: example1,
-            offset: 60,
+            offset: 40,
             duration: 20,
             change: {
                 opacity: {
@@ -100,7 +100,7 @@ scrolling.addTrigger({
         {
             name: 'Disappear',
             element: example2,
-            offset: 50,
+            offset: 30,
             duration: 10,
             change: {
                 opacity: {
@@ -134,7 +134,7 @@ scrolling.addTrigger({
             name: 'Appear',
             element: example3,
             offset: -10,
-            duration: 10,
+            duration: 20,
             change: {
                 opacity: {
                     from: 0,
@@ -145,8 +145,8 @@ scrolling.addTrigger({
         {
             name: 'Appear 2',
             element: example3,
-            offset: 0,
-            duration: 10,
+            offset: 10,
+            duration: 7,
             change: {
                 opacity: {
                     from: .5,

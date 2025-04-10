@@ -10,7 +10,7 @@
     --height:      20px;
     position:      fixed;
     left:          5vw;
-    bottom:         calc(var(--trigger-count) * var(--height));
+    bottom:        calc(var(--trigger-count) * var(--height));
     width:         90vw;
     height:        2px;
     border-bottom: 2px solid #f0f;
@@ -30,6 +30,7 @@
     justify-content: space-between;
     bottom:          0;
     height:          calc(var(--indicator-level) * var(--height));
+    color:           #000;
     font-size:       12px;
     overflow:        hidden;
     pointer-events:  none;
@@ -45,16 +46,6 @@
     padding-right:    5px;
     background-color: #fff;
     pointer-events:   all;
-}
-
-.debug .indicator::after
-{
-    content:  '';
-    position: absolute;
-    z-index:  -1;
-    height:   calc(100% - 2px);
-    width:    calc(100% - 2px);
-    border:   1px solid #fff;
 }
 
 .debug .indicator:hover
@@ -73,9 +64,10 @@
     z-index:        1;
     bottom:         0;
     height:         calc(var(--indicator-count) * var(--height));
-    border-top:     1px solid transparent;
+    border-top:     1px solid #f0f;
     border-left:    1px solid #f0f;
-    border-radius:  2px 0 0 0;
+    border-right:   1px solid #f0f;
+    border-radius:  2px 2px 0 0;
     pointer-events: none;
 }
 
@@ -83,11 +75,6 @@
 {
     border-radius:  1px 1px 1px 0;
     pointer-events: all;
-}
-
-.debug .indicator#current-position::after
-{
-    border-right: none;
 }
 
 .debug .indicator.trigger

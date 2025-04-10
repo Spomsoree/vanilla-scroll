@@ -72,7 +72,7 @@ class Scrolling {
     };
 
     addCurrentPositionIndicator = () => {
-        const indicator = this.addIndicator(IndicatorType.currentPosition);
+        const indicator = this.addIndicator(IndicatorType.currentPosition, null, document.documentElement.scrollTop, (this.clientHeight / this.scrollHeight) * 100);
 
         indicator.setAttribute('id', IndicatorType.currentPosition);
 
@@ -92,12 +92,13 @@ class Scrolling {
         }
     };
 
-    updateCurrentPosition = () => {
+    updateCurrentPosition = (percentage) => {
         if (this.debug && this.currentPosition) {
-            const percentage                = this.percentage.toFixed(2);
-            this.currentPosition.style.left = `${percentage}%`;
+            const fixedPercentage           = this.percentage.toFixed(2);
+            const fixedVisiblePercentage    = percentage.toFixed(2);
+            this.currentPosition.style.left = `${fixedPercentage}%`;
 
-            this.currentPosition.setAttribute('indicator-name', `${percentage}%`);
+            this.currentPosition.setAttribute('indicator-name', `${fixedVisiblePercentage}%`);
         }
     };
 
@@ -148,14 +149,11 @@ class Scrolling {
     calculateSteps = () => this.steps.forEach(step => this.calculateStep(step));
 
     calculatePercentage = () => {
-        this.percentage = (
-            document.documentElement.scrollTop + this.scrollTop
-        ) / (
-            this.scrollHeight - this.clientHeight
-        ) * 100;
+        this.percentage  = (document.documentElement.scrollTop + this.scrollTop) / this.scrollHeight * 100;
+        const percentage = (document.documentElement.scrollTop + this.scrollTop) / (this.scrollHeight - this.clientHeight) * 100;
 
         this.calculateSteps();
-        this.updateCurrentPosition();
+        this.updateCurrentPosition(percentage);
     };
 
     calculateBounds = () => {
@@ -164,14 +162,13 @@ class Scrolling {
         this.clientHeight = document.documentElement.clientHeight;
 
         this.calculatePercentage();
-        //this.updateIndicators();
     };
 
     onScroll = () => this.calculatePercentage();
 
     start = () => {
-        this.addDebug();
         this.calculateBounds();
+        this.addDebug();
         window.addEventListener('resize', this.calculateBounds);
         window.addEventListener('scroll', this.onScroll);
     };
@@ -231,13 +228,11 @@ class Scrolling {
             const rect                        = triggerElement.getBoundingClientRect();
             const triggerTopPositionInPercent = ((rect.top + window.scrollY) / this.scrollHeight) * 100;
             const triggerHeightInPercent      = triggerElement.offsetHeight / this.scrollHeight * 100;
-            const zIndex                      = parseInt(window.getComputedStyle(triggerElement).zIndex) || 0;
 
             return {
                 trigger,
                 topPosition: triggerTopPositionInPercent,
                 height:      triggerHeightInPercent,
-                zIndex,
             };
         });
 
@@ -249,8 +244,6 @@ class Scrolling {
             if (b.topPosition + b.height <= a.topPosition) {
                 return 1;
             }
-
-            return b.zIndex - a.zIndex;
         });
 
         let allStepsInfo = [];
@@ -264,7 +257,6 @@ class Scrolling {
             const stepsFromTrigger = trigger.steps.map(step => {
                 const stepTopPositionInPercent = step.offset * triggerHeightInPercent / 100 + triggerTopPositionInPercent;
                 const stepHeightInPercent      = step.duration * triggerHeightInPercent / 100;
-                const stepZIndex               = step.element ? (parseInt(window.getComputedStyle(step.element).zIndex) || 0) : 0;
 
                 return {
                     name:        step.name,
@@ -272,7 +264,6 @@ class Scrolling {
                     end:         Math.floor(stepTopPositionInPercent + stepHeightInPercent),
                     element:     step.element,
                     changes:     step.change,
-                    zIndex:      stepZIndex,
                     triggerName: trigger.name,
                 };
             });

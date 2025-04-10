@@ -55,8 +55,8 @@ scrolling.addTrigger({
         {
             name: 'Fade In',
             element: example1,
-            offset: 10,
-            duration: 10,
+            offset: 0,
+            duration: 20,
             change: {
                 opacity: {
                     from: 0,
@@ -67,7 +67,7 @@ scrolling.addTrigger({
         {
             name: 'Fade out',
             element: example1,
-            offset: 80,
+            offset: 60,
             duration: 20,
             change: {
                 opacity: {
@@ -88,7 +88,7 @@ scrolling.addTrigger({
         {
             name: 'Appear',
             element: example2,
-            offset: 30,
+            offset: -10,
             duration: 20,
             change: {
                 opacity: {
@@ -100,7 +100,7 @@ scrolling.addTrigger({
         {
             name: 'Disappear',
             element: example2,
-            offset: 80,
+            offset: 50,
             duration: 10,
             change: {
                 opacity: {
@@ -119,10 +119,22 @@ scrolling.addTrigger({
     trigger: document.getElementById('example3-container'),
     steps: [
         {
+            name: 'Rotate',
+            element: example3,
+            offset: -10,
+            duration: 10,
+            change: {
+                transform: {
+                    from: 'rotate(0deg)',
+                    to: 'rotate(-360deg)',
+                },
+            },
+        },
+        {
             name: 'Appear',
             element: example3,
-            offset: 30,
-            duration: 40,
+            offset: -10,
+            duration: 10,
             change: {
                 opacity: {
                     from: 0,
@@ -131,26 +143,14 @@ scrolling.addTrigger({
             },
         },
         {
-            name: 'Appear',
+            name: 'Appear 2',
             element: example3,
-            offset: 70,
-            duration: 30,
+            offset: 0,
+            duration: 10,
             change: {
                 opacity: {
                     from: .5,
                     to: 1,
-                },
-            },
-        },
-        {
-            name: 'Rotate',
-            element: example3,
-            offset: 10,
-            duration: 50,
-            change: {
-                transform: {
-                    from: 'rotate(0deg)',
-                    to: 'rotate(-360deg)',
                 },
             },
         },

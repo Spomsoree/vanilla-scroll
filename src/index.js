@@ -13,19 +13,17 @@ class Scrolling {
         this.start();
     }
 
-    addIndicator = (type, name, topPositionInPercent, endInPercent) => {
+    addIndicator = (type, name, topPositionInPercent, endInPercent, color) => {
         if (!this.debug) {
             return;
         }
-
-        this.colorIndex++;
 
         const indicator = document.createElement('div');
 
         indicator.setAttribute('indicator-name', name);
         indicator.style.setProperty('left', `${topPositionInPercent}%`);
         indicator.style.setProperty('width', `${endInPercent}%`);
-        indicator.style.setProperty('border-color', `hsl(${((this.colorIndex * 137.508) % 360)}, 70%, 50%)`);
+        indicator.style.setProperty('border-color', color);
         indicator.classList.add(type);
         indicator.classList.add('indicator');
         this.debugElement.appendChild(indicator);
@@ -33,12 +31,12 @@ class Scrolling {
         return indicator;
     };
 
-    addStepIndicator = (name, topPositionInPercent, endInPercent) => {
+    addStepIndicator = (name, topPositionInPercent, endInPercent, color) => {
         if (!this.debug) {
             return;
         }
 
-        const indicator                        = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent);
+        const indicator                        = this.addIndicator(IndicatorType.step, name, topPositionInPercent, endInPercent, color);
         const freeFoundIndex                   = this.stepDebugIndexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
         const lowestFreeIndex                  = freeFoundIndex === -1 ? this.stepDebugIndexes.length : freeFoundIndex;
         this.stepDebugIndexes[lowestFreeIndex] = topPositionInPercent + endInPercent;
@@ -47,18 +45,18 @@ class Scrolling {
             this.maxStepIndex = lowestFreeIndex;
         }
 
-        indicator.style.setProperty('--indicator-level', `${lowestFreeIndex + 1}`);
-        this.debugElement.style.setProperty('--indicator-count', `${this.maxStepIndex + 2}`);
+        indicator.style.setProperty('--step-level', `${lowestFreeIndex + 1}`);
+        this.debugElement.style.setProperty('--step-count', `${this.maxStepIndex + 2}`);
 
         return indicator;
     };
 
-    addTriggerIndicator = (name, topPositionInPercent, endInPercent) => {
+    addTriggerIndicator = (name, topPositionInPercent, endInPercent, color) => {
         if (!this.debug) {
             return;
         }
 
-        const indicator                           = this.addIndicator(IndicatorType.trigger, name, topPositionInPercent, endInPercent);
+        const indicator                           = this.addIndicator(IndicatorType.trigger, name, topPositionInPercent, endInPercent, color);
         const freeFoundIndex                      = this.triggerDebugIndexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
         const lowestFreeIndex                     = freeFoundIndex === -1 ? this.triggerDebugIndexes.length : freeFoundIndex;
         this.triggerDebugIndexes[lowestFreeIndex] = topPositionInPercent + endInPercent;
@@ -67,7 +65,7 @@ class Scrolling {
             this.maxTriggerIndex = lowestFreeIndex;
         }
 
-        indicator.style.setProperty('--indicator-level', `${lowestFreeIndex + 1}`);
+        indicator.style.setProperty('--step-level', `${lowestFreeIndex + 1}`);
         this.debugElement.style.setProperty('--trigger-count', `${this.maxTriggerIndex + 2}`);
     };
 
@@ -214,14 +212,14 @@ class Scrolling {
                 this.debugElement.appendChild(currentPosition);
             }
 
-            this.colorIndex          = 0;
             this.maxStepIndex        = 0;
             this.maxTriggerIndex     = 0;
             this.stepDebugIndexes    = [];
             this.triggerDebugIndexes = [];
         }
 
-        this.steps = [];
+        this.steps     = [];
+        let colorIndex = 0;
 
         const triggersWithPositions = this.triggers.map((trigger) => {
             const triggerElement              = trigger.trigger;
@@ -229,8 +227,11 @@ class Scrolling {
             const triggerTopPositionInPercent = ((rect.top + window.scrollY) / this.scrollHeight) * 100;
             const triggerHeightInPercent      = triggerElement.offsetHeight / this.scrollHeight * 100;
 
+            colorIndex++;
+
             return {
                 trigger,
+                color:       `hsl(${Math.round((colorIndex * 137.508) % 360)}, 70%, 50%)`,
                 topPosition: triggerTopPositionInPercent,
                 height:      triggerHeightInPercent,
             };
@@ -248,17 +249,18 @@ class Scrolling {
 
         let allStepsInfo = [];
 
-        triggersWithPositions.forEach(({ trigger, topPosition, height }) => {
+        triggersWithPositions.forEach(({ trigger, topPosition, height, color }) => {
             const triggerTopPositionInPercent = topPosition;
             const triggerHeightInPercent      = height;
 
-            this.addTriggerIndicator(trigger.name, triggerTopPositionInPercent, triggerHeightInPercent);
+            this.addTriggerIndicator(trigger.name, triggerTopPositionInPercent, triggerHeightInPercent, color);
 
             const stepsFromTrigger = trigger.steps.map(step => {
                 const stepTopPositionInPercent = step.offset * triggerHeightInPercent / 100 + triggerTopPositionInPercent;
                 const stepHeightInPercent      = step.duration * triggerHeightInPercent / 100;
 
                 return {
+                    color,
                     name:        step.name,
                     start:       stepTopPositionInPercent,
                     end:         Math.floor(stepTopPositionInPercent + stepHeightInPercent),
@@ -275,7 +277,7 @@ class Scrolling {
 
         allStepsInfo.forEach(stepInfo => {
             this.addStep(stepInfo.start, stepInfo.end, stepInfo.element, stepInfo.changes);
-            this.addStepIndicator(`${stepInfo.name} (${stepInfo.triggerName})`, stepInfo.start, stepInfo.end - stepInfo.start);
+            this.addStepIndicator(`${stepInfo.name} (${stepInfo.triggerName})`, stepInfo.start, stepInfo.end - stepInfo.start, stepInfo.color);
         });
 
         this.calculateBounds();

@@ -1,6 +1,6 @@
 describe('Example spec', () => {
     beforeEach(() => {
-        cy.visit('/example/');
+        cy.visit('/');
     });
 
     it('should render intro-container', () => {

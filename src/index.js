@@ -201,6 +201,7 @@ class Scrolling {
 
     addTrigger = (trigger) => {
         this.triggers.push(trigger);
+        return this;
     };
 
     build = () => {

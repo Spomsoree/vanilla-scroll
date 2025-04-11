@@ -8,15 +8,14 @@
     "type": "module",
     "license": "MIT",
     "scripts": {
-        "dev": "bun run server & bun ./scripts/watch.js",
+        "dev": "bun run server & bun scripts/watch.js",
         "test": "bun run server & cypress run; kill $!",
-        "build": "rm -rf ./dist && bun ./scripts/build.js",
-        "server": "http-server ./dist -p 1337 -c-1"
+        "build": "rm -rf dist && bun scripts/build.js",
+        "server": "bun run scripts/server.js"
     },
     "devDependencies": {
         "bun-copy-plugin": "^0.2.1",
-        "cypress": "^12.17.1",
-        "http-server": "^14.1.1"
+        "cypress": "^12.17.4"
     },
     "targets": {
         "main": {

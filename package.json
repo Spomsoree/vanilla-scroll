@@ -9,7 +9,7 @@
     "license": "MIT",
     "scripts": {
         "dev": "bun run server & bun scripts/watch.js",
-        "test": "bun run scripts/server.js & bun test || { kill $!; exit 1; }; kill $!",
+        "test": "bun run scripts/server.js & bun run build && bun test || { kill $!; exit 1; }; kill $!",
         "build": "rm -rf dist && bun scripts/build.js",
         "server": "bun run scripts/server.js"
     },

@@ -4,7 +4,7 @@ const IndicatorType = Object.freeze({
     step:            'step',
 });
 
-class Scrolling {
+class VanillaScroll {
     constructor({ debug }) {
         this.debug    = debug;
         this.steps    = [];
@@ -283,4 +283,4 @@ class Scrolling {
     };
 }
 
-export default Scrolling;
+export default VanillaScroll;

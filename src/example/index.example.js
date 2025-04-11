@@ -1,6 +1,6 @@
-import Scrolling from './index.js';
+import VanillaScroll from './vanilla-scroll.js';
 
-const scrolling = new Scrolling({ debug: true });
+const scrolling = new VanillaScroll({ debug: true });
 const headline  = document.querySelector('h1');
 const example1  = document.getElementById('example1-title');
 const example2  = document.getElementById('example2-title');

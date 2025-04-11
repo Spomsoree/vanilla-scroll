@@ -2,7 +2,7 @@ import copy from 'bun-copy-plugin';
 
 await Bun.build({
     entrypoints: [
-        './src/index.js',
+        './src/vanilla-scroll.js',
         './src/debug.css',
     ],
     outdir:      './dist',

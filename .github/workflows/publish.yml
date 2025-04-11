@@ -4,15 +4,6 @@ on:
     release:
         types:
             - published
-    push:
-        tags:
-            - '*.*.*'
-    pull_request:
-        types:
-            - opened
-            - edited
-            - reopened
-            - synchronize
 
 jobs:
     build:

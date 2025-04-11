@@ -1,25 +1,25 @@
 describe('Example spec', () => {
-  beforeEach(() => {
-    cy.visit('/example/');
-  });
+    beforeEach(() => {
+        cy.visit('/example/');
+    });
 
-  it('should render intro-container', () => {
-    cy.get('#intro-container')
-      .get('h1')
-      .contains('Intro')
-  })
+    it('should render intro-container', () => {
+        cy.get('#intro-container')
+          .get('h1')
+          .contains('Intro');
+    });
 
-  it('should transform value on scroll', () => {
-    cy.get('#intro-container')
-      .get('h1')
-      .should('have.attr', 'style')
-      .should('contain', 'transform: scale(1)')
+    it('should transform value on scroll', () => {
+        cy.get('#intro-container')
+          .get('h1')
+          .should('have.attr', 'style')
+          .should('contain', 'transform: scale(1)');
 
-    cy.scrollTo('0', '300')
+        cy.scrollTo('0', '300');
 
-    cy.get('#intro-container')
-      .get('h1')
-      .should('have.attr', 'style')
-      .should('contain', 'transform: scale(20)')
-  })
-})
+        cy.get('#intro-container')
+          .get('h1')
+          .should('have.attr', 'style')
+          .should('contain', 'transform: scale(20)');
+    });
+});

@@ -43,40 +43,34 @@
         {
             width:  100vw;
             height: 150vh;
-        }
 
-        section:first-of-type,
-        section:last-of-type
-        {
-            height: 120vh;
-        }
+            &:first-of-type,
+            &:last-of-type
+            {
+                height: 120vh;
+            }
 
-        section .content
-        {
-            position:        sticky;
-            top:             0;
-            width:           100%;
-            height:          100vh;
-            overflow:        hidden;
-            display:         flex;
-            align-items:     center;
-            justify-content: center;
-            pointer-events:  none;
-        }
+            &.example
+            {
+                margin-top: -100vh;
+            }
 
-        section .content > *
-        {
-            pointer-events: all;
-        }
+            .content
+            {
+                position:        sticky;
+                top:             0;
+                width:           100%;
+                height:          100vh;
+                overflow:        hidden;
+                display:         flex;
+                align-items:     center;
+                justify-content: center;
 
-        section.example
-        {
-            margin-top: -100vh;
-        }
-
-        section.example .content h2
-        {
-            opacity: 0;
+                h2
+                {
+                    opacity: 0;
+                }
+            }
         }
     </style>
 </head>

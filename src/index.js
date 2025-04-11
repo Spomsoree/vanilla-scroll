@@ -149,7 +149,7 @@ class Scrolling {
     calculateBounds = () => {
         this.scrollTop    = document.body.scrollTop;
         this.scrollHeight = document.documentElement.scrollHeight;
-        this.clientHeight = document.documentElement.clientHeight;
+        this.clientHeight = window.innerHeight;
 
         this.calculatePercentage();
     };
@@ -167,7 +167,7 @@ class Scrolling {
     start = () => {
         this.calculateBounds();
         window.addEventListener('resize', this.onResize);
-        window.addEventListener('scroll', this.onScroll);
+        window.addEventListener('scroll', this.onScroll, { passive: true });
         this.addDebug();
     };
 
@@ -217,7 +217,7 @@ class Scrolling {
 
             return {
                 trigger,
-                color:       `hsl(${Math.round((colorIndex * 137.508) % 360)}, 70%, 50%)`,
+                color:       `hsl(${Math.round((colorIndex * 137) % 360)}, 70%, 50%)`,
                 topPosition: triggerTopPositionInPercent,
                 height:      triggerHeightInPercent,
             };

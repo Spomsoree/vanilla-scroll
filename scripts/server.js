@@ -16,8 +16,10 @@ const MIME_TYPES = {
     '.txt':  'text/plain',
 };
 
+console.log(`Starting server: http://localhost:${Bun.env.PORT}`);
+
 serve({
-    port: 1337,
+    port: Bun.env.PORT,
     fetch(req) {
         const url = new URL(req.url);
         let path  = url.pathname;

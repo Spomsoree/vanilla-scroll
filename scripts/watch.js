@@ -1,16 +1,24 @@
 import { $ }     from 'bun';
 import { watch } from 'fs';
 
-await $`bun run build`;
+const build = async (filename) => {
+    if (filename) {
+        console.log(`Rebuilding ${filename}`);
+    }
+
+    await $`bun run build &>/dev/null`;
+};
+
+await build();
 
 watch(
     './src/',
     {
         recursive: true,
     },
-    async (event) => {
+    async (event, filename) => {
         if (event === 'rename') {
-            await $`bun run build`;
+            await build(filename);
         }
     },
 );

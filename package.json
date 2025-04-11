@@ -9,13 +9,13 @@
     "license": "MIT",
     "scripts": {
         "dev": "bun run server & bun scripts/watch.js",
-        "test": "bun run server & cypress run; kill $!",
+        "test": "bun run scripts/server.js & bun test; kill $!",
         "build": "rm -rf dist && bun scripts/build.js",
         "server": "bun run scripts/server.js"
     },
     "devDependencies": {
         "bun-copy-plugin": "^0.2.1",
-        "cypress": "^12.17.4"
+        "puppeteer": "^24.6.1"
     },
     "targets": {
         "main": {

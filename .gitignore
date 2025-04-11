@@ -3,3 +3,4 @@ dist/
 .parcel-cache
 node_modules/
 cypress/videos/*.mp4
+cypress/screenshots/*.mp4

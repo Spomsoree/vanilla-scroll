@@ -1,23 +1,23 @@
 {
-    "name": "vanilla-scroll",
-    "version": "1.0.0",
+    "name": "@spomsoree/vanilla-scroll",
+    "version": "0.9.6",
+    "description": "A small little vanilla js scroll library.",
+    "homepage": "https://vanilla-scroll.spomsoree.dev",
     "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
-    "author": "Joshua Schumacher",
+    "author": "Joshua Schumacher <jo@sh.ua> (https://jo.sh.ua)",
+    "type": "module",
     "license": "MIT",
-    "dependencies": {},
-    "source": "src/index.js",
-    "main": "dist/index.js",
     "scripts": {
-        "dev": "parcel watch & http-server -p 1337 -c-1 -o /example/",
-        "build": "rm -rf dist && parcel build && node scripts/deploy.js",
-        "test": "http-server . -p 1337 -c-1 --silent & (sleep 2 && cypress run); kill $!"
+        "dev": "bun run server & bun ./scripts/watch.js",
+        "test": "bun run server & cypress run; kill $!",
+        "build": "rm -rf ./dist && bun ./scripts/build.js",
+        "server": "http-server ./dist -p 1337 -c-1"
     },
     "devDependencies": {
+        "bun-copy-plugin": "^0.2.1",
         "cypress": "^12.17.1",
-        "http-server": "^14.1.1",
-        "parcel": "^2.9.3"
+        "http-server": "^14.1.1"
     },
-    "type": "module",
     "targets": {
         "main": {
             "optimize": true

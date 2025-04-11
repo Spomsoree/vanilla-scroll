@@ -1,6 +1,6 @@
 {
     "name": "@spomsoree/vanilla-scroll",
-    "version": "0.9.7",
+    "version": "0.9.8",
     "description": "A small little vanilla js scroll library.",
     "homepage": "https://vanilla-scroll.spomsoree.dev",
     "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
@@ -16,10 +16,5 @@
     "devDependencies": {
         "bun-copy-plugin": "^0.2.1",
         "puppeteer": "^24.6.1"
-    },
-    "targets": {
-        "main": {
-            "optimize": true
-        }
     }
 }

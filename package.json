@@ -1,10 +1,11 @@
 {
-    "name": "vanilla-scroll",
-    "version": "1.0.0",
+    "name": "@spomsoree/vanilla-scroll",
+    "version": "0.9.6",
+    "description": "A small little vanilla js scroll library.",
+    "homepage": "https://vanilla-scroll.spomsoree.dev",
     "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
-    "author": "Joshua Schumacher",
+    "author": "Joshua Schumacher <jo@sh.ua> (https://jo.sh.ua)",
     "license": "MIT",
-    "dependencies": {},
     "source": "src/index.js",
     "main": "dist/index.js",
     "scripts": {

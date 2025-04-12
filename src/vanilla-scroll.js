@@ -80,6 +80,7 @@ class VanillaScroll {
         );
 
         this.currentPosition.setAttribute('id', IndicatorType.currentPosition);
+        window.addEventListener('resize', this.onResize);
     };
 
     updateCurrentPosition = (percentage) => {
@@ -166,7 +167,6 @@ class VanillaScroll {
 
     start = () => {
         this.calculateBounds();
-        window.addEventListener('resize', this.onResize);
         window.addEventListener('scroll', this.onScroll, { passive: true });
         this.addDebug();
     };

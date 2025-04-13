@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "A small little vanilla js scroll library.",
     "homepage": "https://vanilla-scroll.spomsoree.dev",
-    "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
+    "repository": "https://github.com/Spomsoree/vanilla-scroll",
     "author": "Joshua Schumacher <jo@sh.ua> (https://jo.sh.ua)",
     "type": "module",
     "license": "MIT",

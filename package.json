@@ -1,20 +1,13 @@
 {
     "name": "@spomsoree/vanilla-scroll",
-    "version": "0.9.9",
+    "version": "1.0.0",
     "description": "A small little vanilla js scroll library.",
     "homepage": "https://vanilla-scroll.spomsoree.dev",
     "repository": "git@github.com:Spomsoree/vanilla-scroll.git",
     "author": "Joshua Schumacher <jo@sh.ua> (https://jo.sh.ua)",
     "type": "module",
     "license": "MIT",
-    "main": "vanilla-scroll.js",
-    "module": "vanilla-scroll.js",
-    "exports": {
-        ".": {
-            "import": "./vanilla-scroll.js",
-            "require": "./vanilla-scroll.js"
-        }
-    },
+    "main": "dist/vanilla-scroll.js",
     "scripts": {
         "dev": "bun run build && bun run dev:with-server",
         "dev:with-server": "bun run scripts/server.js & bun scripts/watch.js",

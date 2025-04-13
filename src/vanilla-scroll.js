@@ -21,8 +21,8 @@ class VanillaScroll {
         const indicator = document.createElement('div');
 
         indicator.setAttribute('indicator-name', name);
-        indicator.style.setProperty('left', `${topPositionInPercent}%`);
-        indicator.style.setProperty('width', `${endInPercent}%`);
+        indicator.style.setProperty('left', this.setCssPercent(topPositionInPercent));
+        indicator.style.setProperty('width', this.setCssPercent(endInPercent));
         indicator.style.setProperty('border-color', color);
         indicator.classList.add(type);
         indicator.classList.add('indicator');
@@ -39,7 +39,7 @@ class VanillaScroll {
         const indicator                                  = this.addIndicator(type, name, topPositionInPercent, endInPercent, color);
         const freeFoundIndex                             = this.debugIndexes[type].indexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
         const lowestFreeIndex                            = freeFoundIndex === -1 ? this.debugIndexes[type].indexes.length : freeFoundIndex;
-        this.debugIndexes[type].indexes[lowestFreeIndex] = Math.floor(topPositionInPercent + endInPercent);
+        this.debugIndexes[type].indexes[lowestFreeIndex] = topPositionInPercent + endInPercent;
 
         if (lowestFreeIndex > this.debugIndexes[type].max) {
             this.debugIndexes[type].max = lowestFreeIndex;
@@ -65,11 +65,7 @@ class VanillaScroll {
             },
         };
 
-        this.debugElement = document.createElement('div');
-
-        this.debugElement.classList.add('vanilla-scroll-debug');
-        document.body.appendChild(this.debugElement);
-
+        this.debugElement    = document.createElement('div');
         this.currentPosition = this.addIndicator(
             IndicatorType.currentPosition,
             null,
@@ -77,17 +73,17 @@ class VanillaScroll {
             this.getCurrentPositionWidth(),
         );
 
+        document.body.appendChild(this.debugElement);
+        this.debugElement.classList.add('vanilla-scroll-debug');
         this.currentPosition.setAttribute('id', IndicatorType.currentPosition);
         window.addEventListener('resize', this.onResize);
     };
 
     updateCurrentPosition = (percentage) => {
         if (this.debug && this.currentPosition) {
-            const fixedPercentage           = this.percentage.toFixed(2);
-            const fixedVisiblePercentage    = percentage.toFixed(2);
-            this.currentPosition.style.left = `${fixedPercentage}%`;
+            this.currentPosition.style.left = this.setCssPercent(this.percentage);
 
-            this.currentPosition.setAttribute('indicator-name', `${fixedVisiblePercentage}%`);
+            this.currentPosition.setAttribute('indicator-name', this.setCssPercent(percentage));
         }
     };
 
@@ -138,8 +134,8 @@ class VanillaScroll {
     calculateSteps = () => this.steps.forEach(step => this.calculateStep(step));
 
     calculatePercentage = () => {
-        this.percentage  = (document.documentElement.scrollTop + this.scrollTop) / this.scrollHeight * 100;
-        const percentage = (document.documentElement.scrollTop + this.scrollTop) / (this.scrollHeight - this.clientHeight) * 100;
+        this.percentage  = (document.documentElement.scrollTop + this.scrollTop) / this.scrollHeight;
+        const percentage = (document.documentElement.scrollTop + this.scrollTop) / (this.scrollHeight - this.clientHeight);
 
         this.calculateSteps();
         this.updateCurrentPosition(percentage);
@@ -153,8 +149,9 @@ class VanillaScroll {
         this.calculatePercentage();
     };
 
-    getCurrentPositionWidth = () => (this.clientHeight / this.scrollHeight) * 100;
-    resizeCurrentPosition   = () => this.currentPosition.style.setProperty('width', `${this.getCurrentPositionWidth()}%`);
+    setCssPercent           = (percent) => `${(percent * 100).toFixed(2)}%`;
+    getCurrentPositionWidth = () => this.clientHeight / this.scrollHeight;
+    resizeCurrentPosition   = () => this.currentPosition.style.setProperty('width', this.setCssPercent(this.getCurrentPositionWidth()));
 
     onResize = () => {
         this.calculateBounds();
@@ -207,54 +204,52 @@ class VanillaScroll {
         let colorIndex = 0;
 
         const triggersWithPositions = this.triggers.map((trigger) => {
-            const triggerElement              = trigger.trigger;
-            const rect                        = triggerElement.getBoundingClientRect();
-            const triggerTopPositionInPercent = ((rect.top + window.scrollY) / this.scrollHeight) * 100;
-            const triggerHeightInPercent      = triggerElement.offsetHeight / this.scrollHeight * 100;
+            const triggerElement  = trigger.trigger;
+            const rect            = triggerElement.getBoundingClientRect();
+            const triggerStart    = (rect.top + window.scrollY) / this.scrollHeight;
+            const triggerDuration = triggerElement.offsetHeight / this.scrollHeight;
 
             colorIndex++;
 
             return {
                 trigger,
-                color:       `hsl(${Math.round((colorIndex * 137) % 360)}, 70%, 50%)`,
-                topPosition: triggerTopPositionInPercent,
-                height:      triggerHeightInPercent,
+                color:    `hsl(${Math.round((colorIndex * 137) % 360)}, 70%, 50%)`,
+                start:    triggerStart,
+                duration: triggerDuration,
             };
         });
 
         triggersWithPositions.sort((a, b) => {
-            if (a.topPosition + a.height <= b.topPosition) {
+            if (a.start + a.duration <= b.start) {
                 return -1;
             }
 
-            if (b.topPosition + b.height <= a.topPosition) {
+            if (b.start + b.duration <= a.start) {
                 return 1;
             }
         });
 
         let allStepsInfo = [];
 
-        triggersWithPositions.forEach(({ trigger, topPosition, height, color }) => {
-            const triggerTopPositionInPercent = topPosition;
-            const triggerHeightInPercent      = height;
+        triggersWithPositions.forEach(({ trigger, start, duration, color }) => {
 
             this.addLevelIndicator(
                 IndicatorType.trigger,
                 trigger.name,
-                triggerTopPositionInPercent,
-                triggerHeightInPercent,
+                start,
+                duration,
                 color,
             );
 
             const stepsFromTrigger = trigger.steps.map(step => {
-                const stepTopPositionInPercent = step.offset * triggerHeightInPercent / 100 + triggerTopPositionInPercent;
-                const stepHeightInPercent      = step.duration * triggerHeightInPercent / 100;
+                const stepStart    = step.offset / 100 * duration + start;
+                const stepDuration = step.duration / 100 * duration;
 
                 return {
                     color,
                     name:        step.name,
-                    start:       stepTopPositionInPercent,
-                    end:         Math.floor(stepTopPositionInPercent + stepHeightInPercent),
+                    start:       stepStart,
+                    end:         stepStart + stepDuration,
                     element:     step.element,
                     changes:     step.change,
                     triggerName: trigger.name,

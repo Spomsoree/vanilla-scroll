@@ -16,8 +16,10 @@
         }
     },
     "scripts": {
-        "dev": "bun run build && bun run server & bun scripts/watch.js",
-        "test": "bun run scripts/server.js & bun run build && bun test || { kill $!; exit 1; }; kill $!",
+        "dev": "bun run build && bun run dev:with-server",
+        "dev:with-server": "bun run scripts/server.js & bun scripts/watch.js",
+        "test": "bun run build && bun run test:with-server",
+        "test:with-server": "bun run scripts/server.js & bun test",
         "build": "rm -rf dist && bun scripts/build.js",
         "server": "bun run scripts/server.js"
     },

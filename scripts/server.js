@@ -18,7 +18,7 @@ const MIME_TYPES = {
 
 console.log(`Starting server: http://localhost:${Bun.env.PORT}`);
 
-serve({
+const server = serve({
     port: Bun.env.PORT,
     fetch(req) {
         const url = new URL(req.url);
@@ -51,3 +51,24 @@ serve({
         return new Response('404 Not Found', { status: 404 });
     },
 });
+
+function shutdown() {
+    console.log('Shutting down server gracefully');
+    server.stop();
+    process.exit(0);
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+process.on('disconnect', shutdown);
+
+if (process.ppid) {
+    const checkParentInterval = setInterval(() => {
+        try {
+            process.kill(process.ppid, 0);
+        } catch (error) {
+            clearInterval(checkParentInterval);
+            shutdown();
+        }
+    }, 1000);
+}

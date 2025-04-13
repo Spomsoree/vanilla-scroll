@@ -7,16 +7,16 @@
     "author": "Joshua Schumacher <jo@sh.ua> (https://jo.sh.ua)",
     "type": "module",
     "license": "MIT",
-    "main":    "vanilla-scroll.js",
-    "module":  "vanilla-scroll.js",
+    "main": "vanilla-scroll.js",
+    "module": "vanilla-scroll.js",
     "exports": {
         ".": {
-            "import":  "./vanilla-scroll.js",
+            "import": "./vanilla-scroll.js",
             "require": "./vanilla-scroll.js"
         }
     },
     "scripts": {
-        "dev": "bun run server & bun scripts/watch.js",
+        "dev": "bun run build && bun run server & bun scripts/watch.js",
         "test": "bun run scripts/server.js & bun run build && bun test || { kill $!; exit 1; }; kill $!",
         "build": "rm -rf dist && bun scripts/build.js",
         "server": "bun run scripts/server.js"

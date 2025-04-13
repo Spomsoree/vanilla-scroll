@@ -9,14 +9,17 @@
     --padding:               calc(var(--height) / 4);
     --inner-border-radius:   calc(var(--border-radius) - var(--border-width));
     --timeline-border-width: calc(var(--border-width) / 2);
+    --text-color:            #000;
+    --timeline-color:        #f0f;
+    --background-color:      #ffffffb2;
 
     position:                fixed;
     z-index:                 9999998;
     left:                    5vw;
     bottom:                  calc(var(--trigger-count) * var(--height));
     width:                   90vw;
-    border-top:              var(--timeline-border-width) solid #f0f;
-    border-bottom:           var(--timeline-border-width) solid #f0f;
+    border-top:              var(--timeline-border-width) solid var(--timeline-color);
+    border-bottom:           var(--timeline-border-width) solid var(--timeline-color);
     box-sizing:              border-box;
 
     .indicator
@@ -28,7 +31,7 @@
         justify-content: space-between;
         bottom:          0;
         height:          calc(var(--step-level) * var(--height));
-        color:           #000;
+        color:           var(--text-color);
         font-size:       calc(var(--height) * .6);
         overflow:        hidden;
         pointer-events:  none;
@@ -42,7 +45,7 @@
             white-space:      nowrap;
             padding-left:     var(--padding);
             padding-right:    var(--padding);
-            background-color: #ffffff7f;
+            background-color: var(--background-color);
             pointer-events:   all;
         }
 
@@ -50,7 +53,7 @@
         {
             z-index:          9999999;
             overflow:         visible;
-            background-color: #ffffffb2;
+            background-color: var(--background-color);
         }
 
         &#current-position
@@ -58,26 +61,33 @@
             z-index:       1;
             bottom:        0;
             height:        calc(var(--step-count) * var(--height));
-            border:        var(--border-width) solid #f0f;
+            border:        var(--border-width) solid var(--timeline-color);
             border-bottom: none;
             overflow:      visible;
             border-radius: 0 var(--border-radius) 0 0;
 
             &::before
             {
-                border-radius:  0 var(--inner-border-radius) var(--inner-border-radius) 0;
-                pointer-events: none;
+                height:           calc(var(--height) - var(--border-width) - 1px);
+                border-radius:    0 var(--inner-border-radius) var(--inner-border-radius) 0;
+                pointer-events:   none;
+                background-color: var(--background-color);
             }
 
             &::after
             {
-                content:      'Trigger';
-                position:     absolute;
-                top:          calc(var(--height) * -1);
-                left:         calc(var(--border-width) * -1);
-                height:       calc(var(--height) * 2);
-                border-left:  var(--border-width) solid #f0f;
-                padding-left: var(--padding);
+                content:          'Trigger';
+                position:         absolute;
+                display:          inline-flex;
+                align-items:      center;
+                top:              calc(var(--height) * -1);
+                left:             calc(var(--border-width) * -1);
+                height:           calc(var(--height) - var(--border-width) - 1px);
+                padding-left:     var(--padding);
+                padding-right:    var(--padding);
+                border-left:      var(--border-width) solid var(--timeline-color);
+                border-radius:    0 var(--inner-border-radius) var(--inner-border-radius) 0;
+                background-color: var(--background-color);
             }
         }
 
@@ -85,7 +95,7 @@
         {
             top:           var(--timeline-border-width);
             height:        calc(var(--step-level) * var(--height));
-            border:        var(--border-width) solid #888;
+            border:        var(--border-width) solid;
             border-top:    0;
             border-radius: 0 0 var(--border-radius) var(--border-radius);
 

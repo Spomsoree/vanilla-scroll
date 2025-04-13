@@ -65,12 +65,10 @@ class VanillaScroll {
             },
         };
 
-        this.debugElement     = document.createElement('div');
-        const currentPosition = document.createElement('div');
+        this.debugElement = document.createElement('div');
 
         this.debugElement.classList.add('vanilla-scroll-debug');
         document.body.appendChild(this.debugElement);
-        this.debugElement.appendChild(currentPosition);
 
         this.currentPosition = this.addIndicator(
             IndicatorType.currentPosition,

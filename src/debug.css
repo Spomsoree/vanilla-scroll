@@ -1,26 +1,26 @@
 .vanilla-scroll-debug
 {
-    --height:                20px;
-    --step-level:            0;
-    --step-count:            0;
-    --trigger-count:         0;
-    --border-width:          2px;
-    --border-radius:         8px;
-    --padding:               calc(var(--height) / 4);
-    --inner-border-radius:   calc(var(--border-radius) - var(--border-width));
-    --timeline-border-width: calc(var(--border-width) / 2);
-    --text-color:            #000;
-    --timeline-color:        #f0f;
-    --background-color:      #ffffffb2;
+    --height:                  20px;
+    --step-level:              0;
+    --step-count:              0;
+    --trigger-count:           0;
+    --border-width:            2px;
+    --border-radius:           8px;
+    --padding:                 calc(var(--height) / 4);
+    --inner-border-radius:     calc(var(--border-radius) - var(--border-width));
+    --timeline-border-width:   calc(var(--border-width) / 2);
+    --text-color:              #000;
+    --timeline-color:          #f0f;
+    --background-color:        #ffffffb2;
 
-    position:                fixed;
-    z-index:                 9999998;
-    left:                    5vw;
-    bottom:                  calc(var(--trigger-count) * var(--height));
-    width:                   90vw;
-    border-top:              var(--timeline-border-width) solid var(--timeline-color);
-    border-bottom:           var(--timeline-border-width) solid var(--timeline-color);
-    box-sizing:              border-box;
+    position:                  fixed;
+    z-index:                   9999998;
+    left:                      5vw;
+    bottom:                    calc(var(--trigger-count) * var(--height));
+    width:                     90vw;
+    border-top:                var(--timeline-border-width) solid var(--timeline-color);
+    border-bottom:             var(--timeline-border-width) solid var(--timeline-color);
+    box-sizing:                border-box;
 
     .indicator
     {

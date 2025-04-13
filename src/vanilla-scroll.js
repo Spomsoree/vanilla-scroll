@@ -134,16 +134,47 @@ class VanillaScroll {
         }
     };
 
+    getEvent = (type, step) => {
+        return new CustomEvent(
+            type,
+            {
+                detail: {
+                    element: step.element,
+                },
+            },
+        );
+    };
+
+    sendEvents = (didEnter) => (step) => {
+        if (didEnter && !step.enterCache) {
+            step.enterCache = true;
+
+            if (typeof step.onEnter === 'function') {
+                step.onEnter(this.getEvent('didEnter', step));
+            }
+        } else if (!didEnter && step.enterCache) {
+            step.enterCache = false;
+
+            if (typeof step.onExit === 'function') {
+                step.onExit(this.getEvent('didExit', step));
+            }
+        }
+
+        return null;
+    };
+
     calculateInRangeSteps = (values, step) => {
         const progressFactor = (this.percentage - step.start) / (step.end - step.start);
 
         return (values.from + ((values.to - values.from) * progressFactor));
     };
 
-    calculateTick = (step, calculationFunction) => {
+    calculateTick = (step, calculationFunction, eventFunction) => {
         const changes    = step.changes;
         const element    = step.element;
         const styleCache = step.styleCache || (step.styleCache = {});
+
+        eventFunction(step);
 
         for (const key in changes) {
             const values         = changes[key];
@@ -170,13 +201,13 @@ class VanillaScroll {
             step.lastTickInRange      = true;
             step.lastTickInAfterRange = false;
 
-            this.calculateTick(step, this.calculateInRangeSteps);
+            this.calculateTick(step, this.calculateInRangeSteps, this.sendEvents(true));
         } else if (initially || step.lastTickInRange || step.lastTickInAfterRange) {
             step.lastTickInRange = false;
 
             if (this.percentage > step.end) {
                 step.lastTickInAfterRange = true;
-                this.calculateTick(step, (values) => values.to);
+                this.calculateTick(step, (values) => values.to, this.sendEvents(false));
             }
 
             if (
@@ -184,7 +215,7 @@ class VanillaScroll {
                 (!initially || step.lastTickInAfterRange)
             ) {
                 step.lastTickInAfterRange = false;
-                this.calculateTick(step, (values) => values.from);
+                this.calculateTick(step, (values) => values.from, this.sendEvents(false));
             }
         }
     };
@@ -285,12 +316,14 @@ class VanillaScroll {
         }
     };
 
-    addStep = (start, end, element, changes) => {
+    addStep = (start, end, element, changes, onEnter, onExit) => {
         const step = {
             start,
             end,
             element,
             changes,
+            onEnter,
+            onExit,
             styleCache: {},
         };
 
@@ -358,6 +391,8 @@ class VanillaScroll {
                     end:         stepStart + stepDuration,
                     element:     step.element,
                     changes:     step.change,
+                    onEnter:     step.onEnter,
+                    onExit:      step.onExit,
                     triggerName: trigger.name,
                 });
             });
@@ -365,8 +400,8 @@ class VanillaScroll {
 
         allStepsInfo
             .sort((a, b) => a.start - b.start)
-            .forEach(({ name, start, end, element, changes, triggerName, color }) => {
-                this.addStep(start, end, element, changes);
+            .forEach(({ name, start, end, element, changes, onEnter, onExit, triggerName, color }) => {
+                this.addStep(start, end, element, changes, onEnter, onExit);
                 this.addLevelIndicator(
                     IndicatorType.step,
                     `${name} (${triggerName})`,

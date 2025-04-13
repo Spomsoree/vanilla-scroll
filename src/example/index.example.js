@@ -64,6 +64,20 @@ scrolling.addTrigger({
             },
         },
         {
+            name:     'Active',
+            element:  example1,
+            offset:   20,
+            duration: 20,
+            onEnter:  (event) => {
+                console.log(event);
+                event.detail.element.classList.add('active');
+            },
+            onExit:   (event) => {
+                console.log(event);
+                event.detail.element.classList.remove('active');
+            },
+        },
+        {
             name:     'Fade out',
             element:  example1,
             offset:   40,

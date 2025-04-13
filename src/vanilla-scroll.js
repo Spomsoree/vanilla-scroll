@@ -39,7 +39,7 @@ class VanillaScroll {
         const indicator                                  = this.addIndicator(type, name, topPositionInPercent, endInPercent, color);
         const freeFoundIndex                             = this.debugIndexes[type].indexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
         const lowestFreeIndex                            = freeFoundIndex === -1 ? this.debugIndexes[type].indexes.length : freeFoundIndex;
-        this.debugIndexes[type].indexes[lowestFreeIndex] = topPositionInPercent + endInPercent;
+        this.debugIndexes[type].indexes[lowestFreeIndex] = topPositionInPercent + endInPercent - 0.0001;
 
         if (lowestFreeIndex > this.debugIndexes[type].max) {
             this.debugIndexes[type].max = lowestFreeIndex;

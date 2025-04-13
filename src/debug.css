@@ -82,7 +82,7 @@
                 align-items:      center;
                 top:              calc(var(--height) * -1);
                 left:             calc(var(--border-width) * -1);
-                height:           calc(var(--height) - var(--border-width) - 1px);
+                height:           calc(var(--height) - var(--border-width));
                 padding-left:     var(--padding);
                 padding-right:    var(--padding);
                 border-left:      var(--border-width) solid var(--timeline-color);

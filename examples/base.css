@@ -1,7 +1,15 @@
 :root
 {
-    --padding:      24px;
-    --padding-half: calc(var(--padding) * .5);
+    --padding:          24px;
+    --padding-half:     calc(var(--padding) * .5);
+    --color:            #fff;
+    --background-color: #1e1e1e;
+
+    @media (prefers-color-scheme: light)
+    {
+        --color:            #000;
+        --background-color: #fff;
+    }
 }
 
 *
@@ -20,6 +28,7 @@ html
 body
 {
     display:                    flex;
+    flex-flow:                  column;
     overflow-x:                 hidden;
     overflow-y:                 scroll;
     -webkit-overflow-scrolling: touch;
@@ -27,14 +36,25 @@ body
     min-width:                  320px;
     min-height:                 100vh;
     font-family:                Arial, 'serif';
+    color:                      var(--color);
+    background-color:           var(--background-color);
 
     > section
     {
         > .container
         {
-            padding:   var(--padding);
             max-width: 1440px;
             margin:    0 auto;
+        }
+    }
+
+    a
+    {
+        color: #61dafb;
+
+        &:visited
+        {
+            color: #bb86fc;
         }
     }
 }

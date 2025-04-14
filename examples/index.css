@@ -1,84 +1,114 @@
 body
 {
+    gap:     var(--padding);
+    padding: var(--padding) 0;
+
     h1
     {
-        margin-bottom: var(--padding-half);
-        font-size:     24px;
+        font-size: 32px;
     }
 
     h2
     {
-        margin-bottom: 10px;
-        font-size:     20px;
+        font-size: 24px;
     }
 
     h3
     {
-        margin-bottom: 9px;
-        font-size:     18px;
+        font-size: 18px;
     }
-}
 
-section
-{
-    .example
+    pre
     {
-        display:       flex;
-        gap:           var(--padding);
-        margin-top:    var(--padding-half);
-        margin-bottom: var(--padding);
-        flex-flow:     wrap;
+        display:       inline-block;
+        border:        1px solid var(--color);
+        padding:       var(--padding-half);
+        border-radius: 7px;
+    }
 
-        .code,
-        iframe
+    .installations
+    {
+        display:     flex;
+        flex-flow:   column;
+        align-items: flex-start;
+    }
+
+    .flex
+    {
+        display:   flex;
+        flex-flow: column;
+        gap:       var(--padding);
+    }
+
+    > section
+    {
+        padding: 0 var(--padding);
+
+        .example
         {
-            border:        2px solid #000;
-            border-radius: var(--padding-half);
-            flex:          1;
-            min-width:     400px;
-        }
+            display:   flex;
+            flex-flow: column;
+            gap:       var(--padding-half);
 
-        .code
-        {
-            padding: var(--padding);
-
-            .file
+            .example-title
             {
-                &:not(:last-child)
+                display:         flex;
+                flex-flow:       row nowrap;
+                align-items:     center;
+                justify-content: space-between;
+            }
+
+            .example-body
+            {
+                display:   flex;
+                gap:       var(--padding);
+                flex-flow: wrap;
+
+                .code,
+                iframe
                 {
-                    margin-bottom: var(--padding);
+                    border:        2px solid var(--color);
+                    border-radius: var(--padding-half);
+                    flex:          1;
+                    min-width:     400px;
                 }
 
-                h4
+                .code
                 {
-                    margin-bottom: var(--padding-half);
+                    padding: var(--padding-half);
+
+                    .file
+                    {
+                        &:not(:last-child)
+                        {
+                            margin-bottom: var(--padding);
+                        }
+
+                        pre
+                        {
+                            width: 100%;
+                        }
+                    }
                 }
 
-                pre
+                iframe
                 {
-                    border:        1px solid #000;
-                    padding:       var(--padding-half);
-                    border-radius: 7px;
+                    resize: vertical;
+                    height: 500px;
+                }
+
+                ins
+                {
+                    color:           green;
+                    text-decoration: none;
+                }
+
+                del
+                {
+                    color:           red;
+                    text-decoration: none;
                 }
             }
-        }
-
-        iframe
-        {
-            resize: vertical;
-            height: 500px;
-        }
-
-        ins
-        {
-            color:           green;
-            text-decoration: none;
-        }
-
-        del
-        {
-            color:           red;
-            text-decoration: none;
         }
     }
 }

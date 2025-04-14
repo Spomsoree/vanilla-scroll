@@ -12,22 +12,26 @@ const encodeHtmlEntities    = html => html.replace(/[&<>"']/g, match => ({
 }[match]));
 
 const createDiffBetweenExamples = (previous, current, field) => {
+    let previousField = '';
+
     if (previous) {
-        let htmlOutput = '';
-        const lineDiff = diff.diffLines(previous[field], current[field]);
-
-        lineDiff.forEach(part => {
-            if (part.added) {
-                htmlOutput += `<ins>${part.value}</ins>`;
-            } else if (part.removed) {
-                htmlOutput += `<del>${part.value}</del>`;
-            } else {
-                htmlOutput += part.value;
-            }
-        });
-
-        return htmlOutput;
+        previousField = previous[field];
     }
+
+    let htmlOutput = '';
+    const lineDiff = diff.diffLines(previousField, current[field]);
+
+    lineDiff.forEach(part => {
+        if (part.added) {
+            htmlOutput += `<ins>${part.value}</ins>`;
+        } else if (part.removed) {
+            htmlOutput += `<del>${part.value}</del>`;
+        } else {
+            htmlOutput += part.value;
+        }
+    });
+
+    return htmlOutput;
 
     return current[field];
 };

@@ -1,6 +1,7 @@
 :root
 {
-    --padding: 24px;
+    --padding:      24px;
+    --padding-half: calc(var(--padding) * .5);
 }
 
 *

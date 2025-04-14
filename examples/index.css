@@ -2,7 +2,7 @@ body
 {
     h1
     {
-        margin-bottom: 12px;
+        margin-bottom: var(--padding-half);
         font-size:     24px;
     }
 
@@ -25,7 +25,7 @@ section
     {
         display:       flex;
         gap:           var(--padding);
-        margin-top:    12px;
+        margin-top:    var(--padding-half);
         margin-bottom: var(--padding);
         flex-flow:     wrap;
 
@@ -33,7 +33,7 @@ section
         iframe
         {
             border:        2px solid #000;
-            border-radius: 12px;
+            border-radius: var(--padding-half);
             flex:          1;
             min-width:     400px;
         }
@@ -41,6 +41,26 @@ section
         .code
         {
             padding: var(--padding);
+
+            .file
+            {
+                &:not(:last-child)
+                {
+                    margin-bottom: var(--padding);
+                }
+
+                h4
+                {
+                    margin-bottom: var(--padding-half);
+                }
+
+                pre
+                {
+                    border:        1px solid #000;
+                    padding:       var(--padding-half);
+                    border-radius: 7px;
+                }
+            }
         }
 
         iframe
@@ -62,15 +82,3 @@ section
         }
     }
 }
-
-section .example
-section .example
-section .example .code
-{
-}
-
-section .example iframe
-{
-}
-
-

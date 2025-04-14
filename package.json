@@ -13,11 +13,13 @@
         "dev:with-server": "bun run scripts/server.js & bun scripts/watch.js",
         "test": "bun run build && bun run test:with-server",
         "test:with-server": "bun run scripts/server.js & bun test",
-        "build": "rm -rf dist && bun scripts/build.js",
+        "build": "rm -rf dist && bun scripts/build.js && bun run scripts/examples.js",
         "server": "bun run scripts/server.js"
     },
     "devDependencies": {
-        "bun-copy-plugin": "^0.2.1",
+        "diff": "^7.0.0",
+        "glob": "^11.0.1",
+        "handlebars": "^4.7.8",
         "puppeteer": "^24.6.1"
     },
     "files": [

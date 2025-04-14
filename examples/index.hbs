@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Vanilla-Scroll</title>
+    <link
+        rel="stylesheet"
+        href="/base.css"
+    >
+    <link
+        rel="stylesheet"
+        href="/index.css"
+    >
+</head>
+<body>
+<section>
+    <div class="container">
+        <h1>
+            VanillaScroll Docs
+        </h1>
+        <h2>
+            Links
+        </h2>
+        <ul>
+            <li>
+                <a
+                    href="https://github.com/Spomsoree/vanilla-scroll"
+                    target="_blank"
+                >Github</a>
+            </li>
+            <li>
+                <a
+                    href="https://www.npmjs.com/package/@spomsoree/vanilla-scroll"
+                    target="_blank"
+                >npm</a>
+            </li>
+        </ul>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <h2>
+            Examples
+        </h2>
+        {{#each examples}}
+            <h3>
+                Example {{this.number}}
+            </h3>
+            <div class="example">
+                <div class="code">
+                    <h4>
+                        index.html
+                    </h4>
+                    <pre><code>{{{this.htmlDiff}}}</code></pre>
+                    <h4>
+                        style.css
+                    </h4>
+                    <pre><code>{{{this.stylesDiff}}}</code></pre>
+                    <h4>
+                        script.js
+                    </h4>
+                    <pre><code>{{{this.scriptDiff}}}</code></pre>
+                </div>
+                <iframe src="/example{{this.number}}/index.html"></iframe>
+            </div>
+        {{/each}}
+    </div>
+</section>
+</body>
+</html>

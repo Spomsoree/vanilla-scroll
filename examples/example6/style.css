@@ -1,0 +1,41 @@
+section
+{
+    width: 100vw;
+    height: 150vh;
+
+    &:first-of-type,
+    &:last-of-type
+    {
+        height: 120vh;
+    }
+
+    &.example
+    {
+        margin-top: -100vh;
+    }
+
+    .content
+    {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    h2
+    {
+        opacity: 0;
+        transition: color .2s linear,
+                    background-color .2s linear;
+
+        &.active
+        {
+            color: #fff;
+            background-color: #f0f;
+        }
+    }
+}

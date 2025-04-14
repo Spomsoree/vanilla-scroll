@@ -28,7 +28,7 @@ const server = serve({
             path = '/index.html';
         }
 
-        const filePath = join('./dist', path);
+        const filePath = join('./dist/public', path);
 
         try {
             const stats = statSync(filePath);

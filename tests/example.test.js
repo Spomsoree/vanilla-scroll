@@ -23,7 +23,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-    await page.goto(`http://localhost:${Bun.env.PORT}`);
+    await page.goto(`http://localhost:${Bun.env.PORT}/example6/index.html`);
     await page.waitForSelector('#intro-container');
 });
 

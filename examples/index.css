@@ -1,7 +1,7 @@
 body
 {
-    gap:     var(--padding);
-    padding: var(--padding) 0;
+    gap:         var(--padding);
+    padding-top: var(--padding);
 
     h1
     {
@@ -18,11 +18,19 @@ body
         font-size: 18px;
     }
 
+    a
+    {
+        display: inline-block;
+        margin:  -5px;
+        padding: 5px;
+    }
+
     pre
     {
         display:       inline-block;
         border:        1px solid var(--color);
         padding:       var(--padding-half);
+        overflow:      auto;
         border-radius: 7px;
     }
 
@@ -35,20 +43,32 @@ body
 
     .flex
     {
-        display:   flex;
-        flex-flow: column;
-        gap:       var(--padding);
+        display:     flex;
+        flex-flow:   column;
+        align-items: flex-start;
+        gap:         var(--padding);
     }
 
     > section
     {
         padding: 0 var(--padding);
 
+        > h2
+        {
+            padding-bottom: var(--padding);
+        }
+
         .example
         {
+            width:     100%;
             display:   flex;
             flex-flow: column;
             gap:       var(--padding-half);
+
+            + .example
+            {
+                margin-top: calc(var(--padding) * 4);
+            }
 
             .example-title
             {
@@ -75,7 +95,7 @@ body
 
                 .code
                 {
-                    padding: var(--padding-half);
+                    padding: var(--padding);
 
                     .file
                     {
@@ -93,8 +113,10 @@ body
 
                 iframe
                 {
-                    resize: vertical;
-                    height: 500px;
+                    position: sticky;
+                    top:      var(--padding);
+                    resize:   vertical;
+                    height:   500px;
                 }
 
                 ins

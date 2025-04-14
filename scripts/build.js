@@ -1,9 +1,8 @@
-import copy      from 'bun-copy-plugin';
 import { mkdir } from 'fs/promises';
+import { glob }  from 'glob';
 
 await mkdir('./dist', { recursive: true });
 
-// Build ESM version
 await Bun.build({
     entrypoints: [
         './src/vanilla-scroll.js',
@@ -17,7 +16,6 @@ await Bun.build({
     },
 });
 
-// Build minified ESM version
 await Bun.build({
     entrypoints: [
         './src/vanilla-scroll.js',
@@ -31,7 +29,6 @@ await Bun.build({
     },
 });
 
-// Build CSS
 await Bun.build({
     entrypoints: [
         './src/debug.css',
@@ -39,9 +36,6 @@ await Bun.build({
     outdir:      './dist',
     minify:      true,
     sourcemap:   'external',
-    plugins:     [
-        copy('./src/example/', './dist'),
-    ],
 });
 
 console.log('Library build completed successfully!');

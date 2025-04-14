@@ -380,7 +380,7 @@ class VanillaScroll {
                 color,
             );
 
-            trigger.steps.forEach(step => {
+            trigger.steps?.forEach(step => {
                 const stepStart    = step.offset / 100 * duration + start;
                 const stepDuration = step.duration / 100 * duration;
 

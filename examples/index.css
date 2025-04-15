@@ -121,14 +121,16 @@ body
 
                 ins
                 {
-                    color:           green;
-                    text-decoration: none;
+                    color:            var(--ins-color);
+                    background-color: var(--ins-background-color);
+                    text-decoration:  none;
                 }
 
                 del
                 {
-                    color:           red;
-                    text-decoration: none;
+                    color:            var(--del-color);
+                    background-color: var(--del-background-color);
+                    text-decoration:  none;
                 }
             }
         }

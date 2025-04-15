@@ -1,14 +1,26 @@
 :root
 {
-    --padding:          24px;
-    --padding-half:     calc(var(--padding) * .5);
-    --color:            #fff;
-    --background-color: #1e1e1e;
+    --padding:              24px;
+    --padding-half:         calc(var(--padding) * .5);
+    --color:                #fff;
+    --background-color:     #1e1e1e;
+    --link-color:           #61dafb;
+    --link-visited-color:   #bb86fc;
+    --ins-color:            #4ade80;
+    --del-color:            #f87171;
+    --ins-background-color: #0f3321;
+    --del-background-color: #3f1d25;
 
     @media (prefers-color-scheme: light)
     {
-        --color:            #000;
-        --background-color: #fff;
+        --color:                #000;
+        --background-color:     #fff;
+        --link-color:           #00e;
+        --link-visited-color:   #551a8b;
+        --ins-color:            #004d00;
+        --del-color:            #6e0000;
+        --ins-background-color: #daffcc;
+        --del-background-color: #ffd6dd;
     }
 }
 
@@ -50,11 +62,11 @@ body
 
     a
     {
-        color: #61dafb;
+        color: var(--link-color);
 
         &:visited
         {
-            color: #bb86fc;
+            color: var(--link-visited-color);
         }
     }
 }

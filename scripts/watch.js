@@ -9,6 +9,12 @@ const build = async (filename) => {
     await $`bun run build &>/dev/null`;
 };
 
+const watcher = async (event, filename) => {
+    if (event === 'rename') {
+        await build(filename);
+    }
+};
+
 await build();
 
 watch(
@@ -16,9 +22,13 @@ watch(
     {
         recursive: true,
     },
-    async (event, filename) => {
-        if (event === 'rename') {
-            await build(filename);
-        }
+    watcher,
+);
+
+watch(
+    './examples/',
+    {
+        recursive: true,
     },
+    watcher,
 );

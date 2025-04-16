@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Vanilla-Scroll Demo | {{title}}</title>
+    <meta
+        name="description"
+        content="A lightweight JavaScript library for creating scroll-based animations with minimal configuration."
+    >
+    <link
+        rel="stylesheet"
+        href="/base.css"
+    >
+    <link
+        rel="stylesheet"
+        href="/index.css"
+    >
+</head>
+<body>
+<section>
+    <div class="container flex">
+        <h1>
+            Vanilla-Scroll Demo | {{title}}
+        </h1>
+        {{> @partial-block}}
+        <a href="/">
+            Back
+        </a>
+    </div>
+</section>
+<section>
+    <div class="container flex">
+        {{#each examples}}
+            <section class="example">
+                <div class="example-title">
+                    <h3>
+                        Example {{this.number}}
+                    </h3>
+                    <a
+                        href="/{{this.group}}/example{{this.number}}"
+                        target="_blank"
+                    >View Fullscreen</a>
+                </div>
+                <div class="example-body">
+                    <div class="code">
+                        <div class="file">
+                            <h4>
+                                index.html
+                            </h4>
+                            <pre><code>{{{this.htmlDiff}}}</code></pre>
+                        </div>
+                        <div class="file">
+                            <h4>
+                                style.css
+                            </h4>
+                            <pre><code>{{{this.stylesDiff}}}</code></pre>
+                        </div>
+                        <div class="file">
+                            <h4>
+                                script.js
+                            </h4>
+                            <pre><code>{{{this.scriptDiff}}}</code></pre>
+                        </div>
+                    </div>
+                    <iframe
+                        src="/{{this.group}}/example{{this.number}}/index.html"
+                        title="The example {{this.number}} iframe"
+                    ></iframe>
+                </div>
+            </section>
+        {{/each}}
+    </div>
+</section>
+</body>
+</html>

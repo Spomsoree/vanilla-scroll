@@ -1,4 +1,4 @@
-import VanillaScroll from '../../src/vanilla-scroll.js';
+import VanillaScroll from '../../../src/vanilla-scroll.js';
 
 const scrolling = new VanillaScroll({ debug: true });
 const container = document.getElementById('intro-container');

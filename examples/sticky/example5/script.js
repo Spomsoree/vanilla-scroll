@@ -1,4 +1,4 @@
-import VanillaScroll from '../../src/vanilla-scroll.js';
+import VanillaScroll from '../../../src/vanilla-scroll.js';
 
 const scrolling = new VanillaScroll({ debug: true });
 const container = document.getElementById('intro-container');
@@ -30,6 +30,18 @@ scrolling
                     filter: {
                         from: 'blur(0px)',
                         to:   'blur(10px)',
+                    },
+                },
+            },
+            {
+                name:     'Fade out',
+                element:  headline,
+                offset:   8,
+                duration: 8,
+                change:   {
+                    opacity: {
+                        from: 1,
+                        to:   0,
                     },
                 },
             },

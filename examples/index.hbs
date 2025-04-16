@@ -46,45 +46,13 @@
         <h2>
             Examples
         </h2>
-        {{#each examples}}
-            <section class="example">
-                <div class="example-title">
-                    <h3>
-                        Example {{this.number}}
-                    </h3>
-                    <a
-                        href="/example{{this.number}}"
-                        target="_blank"
-                    >View Fullscreen</a>
-                </div>
-                <div class="example-body">
-                    <div class="code">
-                        <div class="file">
-                            <h4>
-                                index.html
-                            </h4>
-                            <pre><code>{{{this.htmlDiff}}}</code></pre>
-                        </div>
-                        <div class="file">
-                            <h4>
-                                style.css
-                            </h4>
-                            <pre><code>{{{this.stylesDiff}}}</code></pre>
-                        </div>
-                        <div class="file">
-                            <h4>
-                                script.js
-                            </h4>
-                            <pre><code>{{{this.scriptDiff}}}</code></pre>
-                        </div>
-                    </div>
-                    <iframe
-                        src="/example{{this.number}}/index.html"
-                        title="The example {{this.number}} iframe"
-                    ></iframe>
-                </div>
-            </section>
-        {{/each}}
+        <ul>
+            {{#each groups}}
+                <li>
+                    <a href="{{this.lower}}">{{this.name}}</a>
+                </li>
+            {{/each}}
+        </ul>
     </div>
 </section>
 </body>

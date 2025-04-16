@@ -6,7 +6,7 @@
 
 A lightweight JavaScript library for creating scroll-based animations with minimal configuration.
 
-[Visit Demo](https://github.com/Spomsoree/vanilla-scroll)
+[Visit Demo](https://vanilla-scroll.spomsoree.dev)
 
 ## Installation
 

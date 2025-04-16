@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>Vanilla-Scroll Demo | {{title}}</title>
+    <meta
+        name="description"
+        content="A lightweight JavaScript library for creating scroll-based animations with minimal configuration."
+    >
+    <link
+        rel="stylesheet"
+        href="/base.css"
+    >
+    <link
+        rel="stylesheet"
+        href="/index.css"
+    >
+</head>
+<body>
+<section>
+    <div class="container flex">
+        <h1>Vanilla-Scroll Demo | {{title}}</h1>
+        {{> @partial-block}}
+        <a href="/">Back</a>
+    </div>
+</section>
+<section>
+    <div class="container flex">
+        {{#each examples}}
+            <section class="example">
+                <div class="example-title">
+                    <h2>{{this.name}}</h2>
+                    <a
+                        href="/{{this.group}}/{{this.exampleDirectory}}"
+                        target="_blank"
+                    >View Fullscreen</a>
+                </div>
+                <div class="example-body">
+                    <div class="code">
+                        {{#if this.description}}
+                            <p>{{{this.description}}}</p>
+                        {{/if}}
+                        <div class="file">
+                            <h3>index.html</h3>
+                            <pre><code>{{{this.htmlDiff}}}</code></pre>
+                        </div>
+                        <div class="file">
+                            <h3>style.css</h3>
+                            <pre><code>{{{this.stylesDiff}}}</code></pre>
+                        </div>
+                        <div class="file">
+                            <h3>script.js</h3>
+                            <pre><code>{{{this.scriptDiff}}}</code></pre>
+                        </div>
+                    </div>
+                    <iframe
+                        src="/{{this.group}}/{{this.exampleDirectory}}/index.html"
+                        title="The example {{this.name}} iframe"
+                    ></iframe>
+                </div>
+            </section>
+        {{/each}}
+    </div>
+</section>
+</body>
+</html>

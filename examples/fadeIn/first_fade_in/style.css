@@ -1,0 +1,15 @@
+section
+{
+    .content
+    {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        h2
+        {
+            opacity: 0;
+        }
+    }
+}

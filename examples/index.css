@@ -95,15 +95,13 @@ body
 
                 .code
                 {
-                    padding: var(--padding);
+                    display:   flex;
+                    flex-flow: column;
+                    gap:       var(--padding);
+                    padding:   var(--padding);
 
                     .file
                     {
-                        &:not(:last-child)
-                        {
-                            margin-bottom: var(--padding);
-                        }
-
                         pre
                         {
                             width: 100%;

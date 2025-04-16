@@ -6,7 +6,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-    <title>Vanilla-Scroll</title>
+    <title>Vanilla-Scroll Demo</title>
     <meta
         name="description"
         content="A lightweight JavaScript library for creating scroll-based animations with minimal configuration."
@@ -23,19 +23,13 @@
 <body>
 <section>
     <div class="container flex">
-        <h1>
-            Vanilla-Scroll Demo
-        </h1>
-        <p>
-            A lightweight JavaScript library for creating scroll-based animations with minimal configuration.
-        </p>
+        <h1>Vanilla-Scroll Demo</h1>
+        <p>A lightweight JavaScript library for creating scroll-based animations with minimal configuration.</p>
         <a
             href="https://github.com/Spomsoree/vanilla-scroll"
             target="_blank"
         >On Github</a>
-        <h2>
-            Installation
-        </h2>
+        <h2>Installation</h2>
         <div class="installations">
             <pre><code>npm i @spomsoree/vanilla-scroll</code></pre>
         </div>
@@ -43,48 +37,14 @@
 </section>
 <section>
     <div class="container flex">
-        <h2>
-            Examples
-        </h2>
-        {{#each examples}}
-            <section class="example">
-                <div class="example-title">
-                    <h3>
-                        Example {{this.number}}
-                    </h3>
-                    <a
-                        href="/example{{this.number}}"
-                        target="_blank"
-                    >View Fullscreen</a>
-                </div>
-                <div class="example-body">
-                    <div class="code">
-                        <div class="file">
-                            <h4>
-                                index.html
-                            </h4>
-                            <pre><code>{{{this.htmlDiff}}}</code></pre>
-                        </div>
-                        <div class="file">
-                            <h4>
-                                style.css
-                            </h4>
-                            <pre><code>{{{this.stylesDiff}}}</code></pre>
-                        </div>
-                        <div class="file">
-                            <h4>
-                                script.js
-                            </h4>
-                            <pre><code>{{{this.scriptDiff}}}</code></pre>
-                        </div>
-                    </div>
-                    <iframe
-                        src="/example{{this.number}}/index.html"
-                        title="The example {{this.number}} iframe"
-                    ></iframe>
-                </div>
-            </section>
-        {{/each}}
+        <h2>Examples</h2>
+        <ul>
+            {{#each groups}}
+                <li>
+                    <a href="{{this.lower}}">{{this.name}}</a>
+                </li>
+            {{/each}}
+        </ul>
     </div>
 </section>
 </body>

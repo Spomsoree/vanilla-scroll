@@ -7,33 +7,23 @@ import * as diff                               from 'diff';
 
 const ensureDirectoryExists = async directory => !existsSync(directory) && await mkdir(directory, { recursive: true });
 const readTextFile          = path => readFile(path, 'utf8');
-const encodeHtmlEntities    = html => html.replace(/[&<>"']/g, match => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#039;',
-}[match]));
+const encodeHtmlEntities    = html => html.replace(/[&<>"']/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#039;' }[match]));
 
 const createDiffBetweenExamples = (previous, current, field) => {
-    let previousField = '';
+    let html        = '';
+    const prevField = previous ? previous[field] : '';
 
-    if (previous) {
-        previousField = previous[field];
-    }
-
-    let htmlOutput = '';
-    const lineDiff = diff.diffLines(previousField, current[field]);
-
-    lineDiff.forEach(part => {
+    diff.diffLines(prevField, current[field]).forEach(part => {
         if (part.added) {
-            htmlOutput += `<ins>${part.value}</ins>`;
+            html += `<ins>${part.value}</ins>`;
         } else if (part.removed) {
-            htmlOutput += `<del>${part.value}</del>`;
+            html += `<del>${part.value}</del>`;
         } else {
-            htmlOutput += part.value;
+            html += part.value;
         }
     });
 
-    return htmlOutput;
-
-    return current[field];
+    return html;
 };
 
 const readAllExampleFiles = async (examplesDirectory, exampleDirectory) => {
@@ -49,16 +39,19 @@ const readAllExampleFiles = async (examplesDirectory, exampleDirectory) => {
         readTextFile(filePaths.script),
     ]);
 
-    const scriptContent = scriptRawContent.replace('../../src/vanilla-scroll.js', '@spomsoree/vanilla-scroll');
+    const scriptContent = scriptRawContent.replace('../../../src/vanilla-scroll.js', '@spomsoree/vanilla-scroll');
 
     return { mainContent, stylesContent, scriptContent };
 };
 
-const createExampleDataObject = (exampleDirectory, index, { mainContent, stylesContent, scriptContent }, previousExample) => {
+const createExampleDataObject = (name, group, description, exampleDirectory, { mainContent, stylesContent, scriptContent }, previousExample) => {
     const encodedHtmlContent = encodeHtmlEntities(mainContent);
 
     return {
-        number:     index + 1,
+        name,
+        group,
+        description,
+        exampleDirectory,
         html:       encodedHtmlContent,
         styles:     stylesContent,
         script:     scriptContent,
@@ -68,35 +61,33 @@ const createExampleDataObject = (exampleDirectory, index, { mainContent, stylesC
     };
 };
 
-const createTemplateContext = (exampleDirectory, index) => ({
-    title:       `VanillaScroll | Example ${index + 1}`,
-    styleTag:    `<link rel="stylesheet" href="/example${index + 1}/style.css">`,
-    scriptTag:   `<script defer type="module" src="/example${index + 1}/script.js"></script>`,
-    exampleName: exampleDirectory,
+const createTemplateContext = (name, group) => ({
+    name,
+    styleTag:  `<link rel="stylesheet" href="/${group}/${name}/style.css">`,
+    scriptTag: `<script defer type="module" src="/${group}/${name}/script.js"></script>`,
 });
 
-const renderAndWriteExampleFile = async (exampleDirectory, index, mainContent, outputDirectory) => {
-    const template        = Handlebars.compile(`{{#> content}}${mainContent}{{/content}}`);
-    const templateContext = createTemplateContext(exampleDirectory, index);
-    const htmlContent     = template(templateContext);
-
-    const outputPath = join(outputDirectory, `example${index + 1}`);
+const outputFile = async (outputPath, name, content) => {
     await ensureDirectoryExists(outputPath);
-    await writeFile(join(outputPath, 'index.html'), htmlContent);
-
-    return join(outputPath, 'index.html');
+    await writeFile(join(outputPath, name), content);
 };
 
-const processExampleDirectory = async (exampleDirectory, index, examplesDataArray, outputDirectory, examplesDirectory) => {
-    const files           = await readAllExampleFiles(examplesDirectory, exampleDirectory);
-    const previousExample = examplesDataArray[index - 1];
-    const exampleData     = createExampleDataObject(exampleDirectory, index, files, previousExample);
+const renderAndWriteExampleFile = async (exampleDirectory, group, mainContent, outputDirectory) => {
+    const template        = Handlebars.compile(`{{#> content}}${mainContent}{{/content}}`);
+    const templateContext = createTemplateContext(exampleDirectory, group);
+    const htmlContent     = template(templateContext);
+    const outputPath      = join(outputDirectory, exampleDirectory);
 
-    examplesDataArray.push(exampleData);
+    await outputFile(outputPath, 'index.html', htmlContent);
+};
 
-    const outputPath = await renderAndWriteExampleFile(exampleDirectory, index, files.mainContent, outputDirectory);
+const processExampleDirectory = async (name, group, description, exampleDirectory, previousExample, outputDirectory, examplesDirectory) => {
+    const files       = await readAllExampleFiles(examplesDirectory, exampleDirectory);
+    const exampleData = createExampleDataObject(name, group, description, exampleDirectory, files, previousExample);
 
-    return { exampleDirectory, outputPath };
+    await renderAndWriteExampleFile(exampleDirectory, group, files.mainContent, outputDirectory);
+
+    return exampleData;
 };
 
 const getAllExampleDirectories = async (examplesDirectory) => {
@@ -111,14 +102,15 @@ const initializeTemplateSystem = async (examplesDirectory) => {
     const baseTemplateContent = await readTextFile(join(examplesDirectory, 'base.hbs'));
     Handlebars.registerPartial('content', baseTemplateContent);
 
-    return baseTemplateContent;
+    const baseExampleTemplateContent = await readTextFile(join(examplesDirectory, 'index_example.hbs'));
+    Handlebars.registerPartial('text', baseExampleTemplateContent);
 };
 
-const renderIndexFile = async (indexTemplateContent, examplesDataArray, outputDirectory) => {
+const renderIndexFile = async (indexTemplateContent, data, outputDirectory) => {
     const template    = Handlebars.compile(indexTemplateContent);
-    const htmlContent = template({ examples: examplesDataArray });
+    const htmlContent = template(data);
 
-    await writeFile(join(outputDirectory, 'index.html'), htmlContent);
+    await outputFile(outputDirectory, 'index.html', htmlContent);
 };
 
 const renderAllExamples = async () => {
@@ -127,23 +119,44 @@ const renderAllExamples = async () => {
         output:   join(process.cwd(), './dist/public'),
     };
 
-    const indexTemplateContent = await readTextFile(join(paths.examples, 'index.hbs'));
-
-    const exampleDirectories = await getAllExampleDirectories(paths.examples);
-
     await initializeTemplateSystem(paths.examples);
-    await ensureDirectoryExists(paths.output);
 
-    const examplesDataArray = [];
+    const indexTemplateContent = await readTextFile(join(paths.examples, 'index.hbs'));
+    const exampleGroups        = await getAllExampleDirectories(paths.examples);
+    const groups               = [];
 
-    for (const [index, directory] of exampleDirectories.entries()) {
-        await processExampleDirectory(directory, index, examplesDataArray, paths.output, paths.examples);
+    for (const group of exampleGroups) {
+        let lastExample            = null;
+        const groupDirectory       = join(paths.examples, group);
+        const exampleContent       = Bun.TOML.parse(await readTextFile(join(groupDirectory, 'content.toml')));
+        const groupName            = exampleContent.name;
+        const examplesData         = {};
+        const groupOutputDirectory = join(paths.output, group);
+        const groupData            = {
+            title: groupName,
+        };
+
+        for (const [exampleDirectory, content] of Object.entries(exampleContent.order)) {
+            const { name, description }    = content;
+            const previousExample          = lastExample ? examplesData[lastExample] : { html: '', script: '', styles: '' };
+            examplesData[exampleDirectory] = await processExampleDirectory(name, group, description, exampleDirectory, previousExample, groupOutputDirectory, groupDirectory);
+            lastExample                    = exampleDirectory;
+        }
+
+        groupData.examples = examplesData;
+        const template     = Handlebars.compile(`{{#> text}}${exampleContent.description}{{/text}}`);
+        const htmlContent  = template(groupData);
+
+        await renderIndexFile(htmlContent, groupData, groupOutputDirectory);
+
+        groups.push({
+            name:  groupName,
+            lower: group,
+        });
     }
 
-    await renderIndexFile(indexTemplateContent, examplesDataArray, paths.output);
+    await renderIndexFile(indexTemplateContent, { groups: groups }, paths.output);
 };
-
-await renderAllExamples();
 
 await Bun.build({
     entrypoints: [
@@ -163,6 +176,7 @@ await Bun.build({
         './examples/index.css',
         ...styleCssFiles,
     ],
+    minify:      true,
     outdir:      './dist/public',
     root:        './examples',
 });
@@ -171,7 +185,11 @@ await Bun.build({
     entrypoints: [
         ...scriptJsFiles,
     ],
+    minify:      true,
     outdir:      './dist/public',
+    root:        './examples',
 });
+
+await renderAllExamples();
 
 console.log('Examples build completed successfully!');

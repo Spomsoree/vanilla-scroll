@@ -1,0 +1,12 @@
+name = 'Fade In'
+description = 'Simple fade in example'
+
+
+[order]
+    [order.layout]
+        name = 'Basic Slide Layout'
+        description = 'Creates a foundation with two full-height slides, each occupying <b>100vh</b> of vertical space for a clean, screen-filling presentation.'
+
+    [order.first_fade_in]
+        name = 'Title Reveal Animation'
+        description = 'Implements a dynamic entrance effect by initially hiding the second title via CSS, then gradually revealing it with a fade-in animation as the user scrolls to just before the center point.'

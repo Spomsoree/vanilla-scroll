@@ -69,4 +69,9 @@ body
             color: var(--link-visited-color);
         }
     }
+
+    ul
+    {
+        padding-left: 15px;
+    }
 }

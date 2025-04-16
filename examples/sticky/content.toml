@@ -1,0 +1,26 @@
+name = 'Sticky'
+description = 'Complex sticky content example'
+
+[order]
+    [order.example1]
+        name = 'Basic Sticky Container'
+        description = 'Creates a sticky container with <b>150vh</b> height to provide a scrolling space of <b>50vh</b>, establishing the foundation for scroll-based animations.'
+
+    [order.example2]
+        name = 'Sticky Container with Trigger'
+        description = 'Implements a scroll trigger mechanism that detects when the user scrolls to specific points, without yet applying any visual steps.'
+
+    [order.example3]
+        name = 'Headline Animation Step'
+        description = 'Adds the first animation step: scaling up the headline gradually as the user scrolls.'
+
+    [order.example4]
+        name = 'Blur Effect Integration'
+        description = 'Incorporates a second animation step: progressively adding a blur effect to background elements.'
+
+    [order.example5]
+        name = 'Complete Intro Transition'
+        description = 'Finalizes the intro animation sequence by controlling opacity levels, creating a smooth fade-out effect as the user continues scrolling.'
+
+    [order.example6]
+        name = 'Escalation'

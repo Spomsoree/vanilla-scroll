@@ -62,7 +62,7 @@ const createExampleDataObject = (name, group, description, exampleDirectory, { m
 };
 
 const createTemplateContext = (name, group) => ({
-    name,
+    title:     name,
     styleTag:  `<link rel="stylesheet" href="/${group}/${name}/style.css">`,
     scriptTag: `<script defer type="module" src="/${group}/${name}/script.js"></script>`,
 });

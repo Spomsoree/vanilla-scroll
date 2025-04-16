@@ -1,5 +1,4 @@
 import { mkdir } from 'fs/promises';
-import { glob }  from 'glob';
 
 await mkdir('./dist', { recursive: true });
 

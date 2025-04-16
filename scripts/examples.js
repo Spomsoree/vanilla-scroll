@@ -64,7 +64,7 @@ const createExampleDataObject = (name, group, description, exampleDirectory, { m
 const createTemplateContext = (name, group) => ({
     title:     name,
     styleTag:  `<link rel="stylesheet" href="/${group}/${name}/style.css">`,
-    scriptTag: `<script defer type="module" src="/${group}/${name}/script.js"></script>`,
+    scriptTag: `<script defer async type="module" src="/${group}/${name}/script.js"></script>`,
 });
 
 const outputFile = async (outputPath, name, content) => {
@@ -174,11 +174,14 @@ await Bun.build({
     entrypoints: [
         './examples/base.css',
         './examples/index.css',
+        './examples/favicon.ico',
         ...styleCssFiles,
     ],
-    minify:      true,
     outdir:      './dist/public',
     root:        './examples',
+    naming:      {
+        asset: '[dir]/[name].[ext]',
+    },
 });
 
 await Bun.build({

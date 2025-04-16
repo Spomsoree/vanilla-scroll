@@ -7,10 +7,11 @@ import { launch } from 'chrome-launcher';
 import lighthouse from 'lighthouse';
 
 const thresholds = {
-    'interactive':               0.95,// TODO: Improve the example group index pages to be able to get rid of this
-    'largest-contentful-paint':  0.95,// TODO: Improve the example group index pages to be able to get rid of this
+    'speed-index':               0.95, // TODO: Improve the example group index pages to be able to get rid of this
+    'interactive':               0.95, // TODO: Improve the example group index pages to be able to get rid of this
+    'largest-contentful-paint':  0.95, // TODO: Improve the example group index pages to be able to get rid of this
     'first-contentful-paint':    0.85, // TODO: Improve the example group index pages to be able to get rid of this
-    'document-latency-insight':  0.49,// TODO: Improve the example group index pages to be able to get rid of this
+    'document-latency-insight':  0.49, // TODO: Improve the example group index pages to be able to get rid of this
     'uses-text-compression':     0,
     'render-blocking-insight':   0,
     'render-blocking-resources': 0,

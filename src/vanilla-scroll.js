@@ -166,25 +166,31 @@ class VanillaScroll {
     calculateInRangeSteps = (values, step) => {
         const progressFactor = (this.percentage - step.start) / (step.end - step.start);
 
-        return (values.from + ((values.to - values.from) * progressFactor));
+        return (values.from + ((values.to - values.from) * progressFactor)).toFixed(2);
     };
 
     calculateTick = (step, calculationFunction, eventFunction) => {
-        const changes    = step.changes;
-        const element    = step.element;
-        const styleCache = step.styleCache || (step.styleCache = {});
+        const parsedChanges = step.parsedChanges;
+        const element       = step.element;
 
         eventFunction(step);
 
-        for (const key in changes) {
-            const values         = changes[key];
-            const value          = calculationFunction(values, step);
-            const formattedValue = `${values.prefix || ''}${value}${values.suffix || ''}`;
-            if (styleCache[key] !== formattedValue) {
-                styleCache[key]    = formattedValue;
-                element.style[key] = formattedValue;
-            }
+        if (!parsedChanges) {
+            return;
         }
+
+        Object.entries(parsedChanges).forEach(([key, values]) => {
+            const { from, to } = values;
+            let formattedValue = '';
+
+            from.forEach((change, index) => {
+                const value = calculationFunction({ from: change.value, to: to[index].value }, step);
+                formattedValue += `${change.prefix || ''}${value}${change.unit || ''}${change.suffix || ''} `;
+
+            });
+
+            element.style[key] = formattedValue;
+        });
     };
 
     calculateStep = (step, initially = false) => {
@@ -295,23 +301,59 @@ class VanillaScroll {
         this.addDebug();
     };
 
+    parseStringChanges = (input) => {
+        let match;
+        const changes = [];
+        const regex   = /(\w+)\(([-+]?[\d.]+)([a-zA-Z%]*)(?:,\s*([-+]?[\d.]+)([a-zA-Z%]*))*\)/g;
+
+        while ((match = regex.exec(input)) !== null) {
+            const change = {
+                unit:   match[3] || '',
+                value:  parseFloat(match[2]),
+                prefix: `${match[1]}(`,
+                suffix: ')',
+            };
+
+            if (match[4]) {
+                change.additionalValues = [];
+
+                for (let index = 4; index < match.length; index += 2) {
+                    if (match[index]) {
+                        change.additionalValues.push({
+                            value: parseFloat(match[index]),
+                            unit:  match[index + 1] || '',
+                        });
+                    }
+                }
+            }
+
+            changes.push(change);
+        }
+
+        return changes;
+    };
+
     prepareStep = (step) => {
         const changes = step.changes;
-        const regex   = new RegExp('(.*?)(-?\\d+)(.*)');
 
         for (const key in changes) {
-            const values = changes[key];
+            const values            = changes[key];
+            step.parsedChanges[key] = {};
 
             if (typeof values.to === 'string' && typeof values.from === 'string') {
-                const valueStringFrom = values.from.match(regex);
-                const valueStringTo   = values.to.match(regex);
-
-                if (valueStringFrom && valueStringTo) {
-                    values.from   = parseInt(valueStringFrom[2], 10);
-                    values.to     = parseInt(valueStringTo[2], 10);
-                    values.prefix = valueStringTo[1];
-                    values.suffix = valueStringTo[3];
-                }
+                step.parsedChanges[key] = {
+                    from: this.parseStringChanges(values.from),
+                    to:   this.parseStringChanges(values.to),
+                };
+            } else {
+                step.parsedChanges[key] = {
+                    from: [{
+                        value: values.from,
+                    }],
+                    to:   [{
+                        value: values.to,
+                    }],
+                };
             }
         }
     };
@@ -324,7 +366,7 @@ class VanillaScroll {
             changes,
             onEnter,
             onExit,
-            styleCache: {},
+            parsedChanges: [],
         };
 
         this.steps.push(step);

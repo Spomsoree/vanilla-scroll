@@ -1,7 +1,7 @@
 body
 {
-    gap:         var(--padding);
-    padding-top: var(--padding);
+    gap:     var(--padding);
+    padding: var(--padding) 0;
 
     h1
     {
@@ -27,11 +27,12 @@ body
 
     pre
     {
-        display:       inline-block;
-        border:        1px solid var(--color);
-        padding:       var(--padding-half);
-        overflow:      auto;
-        border-radius: 7px;
+        display:          inline-block;
+        border:           1px solid var(--color);
+        padding:          var(--padding-half);
+        overflow:         auto;
+        border-radius:    7px;
+        background-color: var(--background-secondary-color);
     }
 
     .installations

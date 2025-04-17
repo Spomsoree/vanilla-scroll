@@ -16,14 +16,14 @@ scrolling
         trigger: container,
         steps:   [
             {
-                name:     'Scale up',
+                name:     'Scale up and rotate',
                 element:  headline,
                 offset:   0,
                 duration: 10,
                 change:   {
                     transform: {
-                        from: 'scale(1)',
-                        to:   'scale(20)',
+                        from: 'scale(1) rotate(0deg)',
+                        to:   'scale(20) rotate(90deg)',
                     },
                 },
             },

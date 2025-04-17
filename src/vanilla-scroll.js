@@ -112,7 +112,6 @@ class VanillaScroll {
         this.debugElement.classList.add('vanilla-scroll-debug');
         document.body.appendChild(this.debugElement);
         this.currentPosition.setAttribute('id', IndicatorType.currentPosition);
-        window.addEventListener('resize', this.onResize, { passive: true });
     };
 
     updateCurrentPosition = () => {
@@ -298,6 +297,7 @@ class VanillaScroll {
     start = () => {
         this.calculateBounds();
         window.addEventListener('scroll', this.onScroll, { passive: true });
+        window.addEventListener('resize', this.onResize, { passive: true });
         this.addDebug();
     };
 

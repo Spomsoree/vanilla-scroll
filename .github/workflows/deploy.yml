@@ -28,3 +28,8 @@ jobs:
                     remote_host: ${{ secrets.SSH_HOST }}
                     remote_user: ${{ secrets.SSH_USER }}
                     remote_key:  ${{ secrets.SSH_KEY }}
+            -   name: Purge cloudflare cache
+                uses: jakejarvis/cloudflare-purge-action@master
+                env:
+                    CLOUDFLARE_ZONE:  ${{ secrets.CLOUDFLARE_ZONE }}
+                    CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}

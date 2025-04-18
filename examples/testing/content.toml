@@ -1,0 +1,7 @@
+name = 'Testing'
+description = 'Where I test edge cases'
+
+[order]
+    [order.everything]
+        name = 'Everything'
+        description = 'Where I test edge cases'

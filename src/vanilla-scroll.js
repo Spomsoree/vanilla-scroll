@@ -5,8 +5,8 @@ const IndicatorType = Object.freeze({
 });
 
 class VanillaScroll {
-    constructor({ debug }) {
-        this.debug          = debug;
+    constructor(options) {
+        this.debug          = options?.debug;
         this.steps          = [];
         this.nodes          = [];
         this.triggers       = [];
@@ -45,28 +45,10 @@ class VanillaScroll {
         }
 
         let lowestFreeIndex;
-        const indicator = this.addIndicator(type, name, topPositionInPercent, endInPercent, color);
-        const indexes   = this.debugIndexes[type].indexes;
-
-        if (indexes.length > 20) {
-            let left  = 0;
-            let right = indexes.length - 1;
-
-            while (left <= right) {
-                const mid = Math.floor((left + right) / 2);
-
-                if (indexes[mid] <= topPositionInPercent) {
-                    right = mid - 1;
-                } else {
-                    left = mid + 1;
-                }
-            }
-
-            lowestFreeIndex = left;
-        } else {
-            const freeFoundIndex = indexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
-            lowestFreeIndex      = freeFoundIndex === -1 ? indexes.length : freeFoundIndex;
-        }
+        const indicator      = this.addIndicator(type, name, topPositionInPercent, endInPercent, color);
+        const indexes        = this.debugIndexes[type].indexes;
+        const freeFoundIndex = indexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
+        lowestFreeIndex      = freeFoundIndex === -1 ? indexes.length : freeFoundIndex;
 
         this.debugIndexes[type].indexes[lowestFreeIndex] = topPositionInPercent + endInPercent - 0.0001;
 
@@ -239,7 +221,7 @@ class VanillaScroll {
 
             nodeStyleChanges[step.nodeId] = this.calculateStep(step, styleChanges ?? {});
         });
-        
+
         Object.entries(nodeStyleChanges).forEach(([nodeId, nodeStyleChange]) => {
             this.nodes[nodeId].style = Object.entries(nodeStyleChange).map(([property, value]) => `${property}:${value};`).join('');
         });

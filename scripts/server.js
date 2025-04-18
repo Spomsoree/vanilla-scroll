@@ -24,8 +24,8 @@ const server = serve({
         const url = new URL(req.url);
         let path  = url.pathname;
 
-        if (path === '/') {
-            path = '/index.html';
+        if (path.endsWith('/')) {
+            path += '/index.html';
         }
 
         const filePath = join('./dist/public', path);

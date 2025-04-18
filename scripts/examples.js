@@ -150,8 +150,9 @@ const renderAllExamples = async () => {
         await renderIndexFile(htmlContent, groupData, groupOutputDirectory);
 
         groups.push({
-            name:  groupName,
-            lower: group,
+            name:        groupName,
+            lower:       group,
+            description: exampleContent.description,
         });
     }
 

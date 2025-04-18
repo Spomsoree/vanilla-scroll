@@ -160,6 +160,7 @@ class VanillaScroll {
         }
 
         Object.entries(parsedChanges).forEach(([key, values]) => {
+            const cssKey = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
             const { from, to } = values;
             let formattedValue = '';
 
@@ -168,11 +169,11 @@ class VanillaScroll {
                 formattedValue += `${change.prefix || ''}${value}${change.unit || ''}${change.suffix || ''}`;
             });
 
-            if (!styleChanges[key]) {
-                styleChanges[key] = '';
+            if (!styleChanges[cssKey]) {
+                styleChanges[cssKey] = '';
             }
 
-            styleChanges[key] += formattedValue;
+            styleChanges[cssKey] += formattedValue;
         });
 
         return styleChanges;
@@ -288,11 +289,21 @@ class VanillaScroll {
     };
 
     parseStringChange = (input) => {
+        if (typeof input !== 'string') {
+            return {
+                0: {
+                    value: input,
+                },
+            };
+        }
+
         let match;
+        let didMatch  = false;
         const changes = {};
         const regex   = /(\w+)\(([-+]?[\d.]+)([a-zA-Z%]*)(?:,\s*([-+]?[\d.]+)([a-zA-Z%]*))*\)/g;
 
         while ((match = regex.exec(input)) !== null) {
+            didMatch     = true;
             const prefix = `${match[1]}(`;
             const value  = parseFloat(match[2]);
             const unit   = value && match[3] !== '' ? match[3] : null;
@@ -303,6 +314,17 @@ class VanillaScroll {
                 prefix,
                 suffix: ')',
             };
+        }
+
+        if (!didMatch) {
+            const simpleRegex = /([-+]?[\d.]+)([a-zA-Z%]*)/g;
+
+            while ((match = simpleRegex.exec(input)) !== null) {
+                changes[0] = {
+                    unit:  match[2],
+                    value: parseFloat(match[1]),
+                };
+            }
         }
 
         return changes;
@@ -335,20 +357,7 @@ class VanillaScroll {
 
         Object.entries(step.changes)
               .forEach(([key, values]) => {
-                  step.parsedChanges[key] = {};
-
-                  if (typeof values.to === 'string' && typeof values.from === 'string') {
-                      step.parsedChanges[key] = this.parseStringChanges(values);
-                  } else {
-                      step.parsedChanges[key] = {
-                          from: [{
-                              value: values.from,
-                          }],
-                          to:   [{
-                              value: values.to,
-                          }],
-                      };
-                  }
+                  step.parsedChanges[key] = this.parseStringChanges(values);
               })
         ;
     };

@@ -2,6 +2,14 @@ name = 'Testing'
 description = 'Where I test edge cases'
 
 [order]
-    [order.everything]
-        name = 'Everything'
-        description = 'Where I test edge cases'
+    [order.serial]
+        name = 'Serial'
+        description = 'No colition in series'
+
+    [order.serial_transform]
+        name = 'Serial transform'
+        description = 'No colition in series with transform'
+
+    [order.overlapping_transform]
+        name = 'Overlapping transform'
+        description = 'Overlapping transforms'

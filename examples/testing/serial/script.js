@@ -10,38 +10,34 @@ scrolling
         trigger: container,
         steps: [
             {
-                name: 'Scale up',
+                name: 'Border Top Grow',
                 element: headline,
                 offset: 0,
-                duration: 10,
+                duration: 8,
                 changes: {
-                    transform: {
-                        from: 'scale(1)',
-                        to: 'scale(20)',
+                    borderTopWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                    borderBottomWidth: {
+                        from: '20px',
+                        to: '1px',
                     },
                 },
             },
             {
-                name: 'Blur',
-                element: headline,
-                offset: 3,
-                duration: 10,
-                changes: {
-                    filter: {
-                        from: 'blur(0px)',
-                        to: 'blur(10px)',
-                    },
-                },
-            },
-            {
-                name: 'Fade out',
+                name: 'Border Bottom Grow',
                 element: headline,
                 offset: 8,
                 duration: 8,
                 changes: {
-                    opacity: {
-                        from: 1,
-                        to: 0,
+                    borderTopWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                    borderBottomWidth: {
+                        from: '1px',
+                        to: '20px',
                     },
                 },
             },

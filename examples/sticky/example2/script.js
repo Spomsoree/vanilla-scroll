@@ -5,7 +5,7 @@ const container = document.getElementById('intro-container');
 
 scrolling
     .addTrigger({
-        name:    'Intro',
+        name: 'Intro',
         trigger: container,
     })
     .build();

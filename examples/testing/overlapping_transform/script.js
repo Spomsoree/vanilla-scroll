@@ -10,38 +10,26 @@ scrolling
         trigger: container,
         steps: [
             {
-                name: 'Scale up',
+                name: 'Rotate',
                 element: headline,
-                offset: 0,
-                duration: 10,
+                offset: 1,
+                duration: 7,
                 changes: {
                     transform: {
-                        from: 'scale(1)',
-                        to: 'scale(20)',
+                        from: 'rotate(0)',
+                        to: 'rotate(45deg)',
                     },
                 },
             },
             {
-                name: 'Blur',
+                name: 'Multi mix transform',
                 element: headline,
                 offset: 3,
                 duration: 10,
                 changes: {
-                    filter: {
-                        from: 'blur(0px)',
-                        to: 'blur(10px)',
-                    },
-                },
-            },
-            {
-                name: 'Fade out',
-                element: headline,
-                offset: 8,
-                duration: 8,
-                changes: {
-                    opacity: {
-                        from: 1,
-                        to: 0,
+                    transform: {
+                        from: 'scale(0) translateY(0)',
+                        to: 'translateY(50%) scale(20)',
                     },
                 },
             },

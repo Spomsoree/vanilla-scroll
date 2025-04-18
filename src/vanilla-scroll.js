@@ -147,7 +147,7 @@ class VanillaScroll {
     calculateInRangeSteps = (values, step) => {
         const progressFactor = (this.percentage - step.start) / (step.end - step.start);
 
-        return (values.from + ((values.to - values.from) * progressFactor)).toFixed(2);
+        return values.from + ((values.to - values.from) * progressFactor);
     };
 
     calculateTick = (step, styleChanges, calculationFunction, eventFunction) => {
@@ -160,20 +160,22 @@ class VanillaScroll {
         }
 
         Object.entries(parsedChanges).forEach(([key, values]) => {
-            const cssKey = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+            const cssKey       = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
             const { from, to } = values;
-            let formattedValue = '';
 
             Object.entries(from).forEach(([index, change]) => {
-                const value = calculationFunction({ from: change.value, to: to[index].value }, step);
-                formattedValue += `${change.prefix || ''}${value}${change.unit || ''}${change.suffix || ''}`;
+                const value  = calculationFunction({ from: change.value, to: to[index].value }, step);
+                const prefix = change.prefix ?? 0;
+
+                if (!styleChanges[cssKey]) {
+                    styleChanges[cssKey] = {};
+                }
+
+                styleChanges[cssKey][prefix] = {
+                    ...change,
+                    value,
+                };
             });
-
-            if (!styleChanges[cssKey]) {
-                styleChanges[cssKey] = '';
-            }
-
-            styleChanges[cssKey] += formattedValue;
         });
 
         return styleChanges;
@@ -218,13 +220,17 @@ class VanillaScroll {
         const nodeStyleChanges = {};
 
         this.steps.forEach(step => {
-            const styleChanges = nodeStyleChanges[step.nodeId];
-
-            nodeStyleChanges[step.nodeId] = this.calculateStep(step, styleChanges ?? {});
+            nodeStyleChanges[step.nodeId] = this.calculateStep(step, nodeStyleChanges[step.nodeId] ?? {});
         });
 
         Object.entries(nodeStyleChanges).forEach(([nodeId, nodeStyleChange]) => {
-            this.nodes[nodeId].style = Object.entries(nodeStyleChange).map(([property, value]) => `${property}:${value};`).join('');
+            this.nodes[nodeId].style = Object.entries(nodeStyleChange).map(([property, value]) => {
+                const stringValue = Object.values(value).map(val => {
+                    return `${val.prefix || ''}${val.value.toFixed(2)}${val.unit || ''}${val.suffix || ''}`;
+                }).join('');
+
+                return `${property}:${stringValue};`;
+            }).join('');
         });
     };
 
@@ -362,20 +368,15 @@ class VanillaScroll {
         ;
     };
 
-    addStep = (start, end, nodeId, changes, onEnter, onExit) => {
-        const step = {
-            start,
-            end,
-            nodeId,
-            changes,
-            onEnter,
-            onExit,
+    addStep = (step) => {
+        const preparedStep = {
+            ...step,
             parsedChanges: [],
         };
 
-        this.steps.push(step);
-        this.prepareStep(step);
-        this.calculateStep(step, {}, true);
+        this.steps.push(preparedStep);
+        this.prepareStep(preparedStep);
+        this.calculateStep(preparedStep, {}, true);
     };
 
     addTrigger = (trigger) => {
@@ -441,14 +442,11 @@ class VanillaScroll {
                 }
 
                 allStepsInfo.push({
+                    ...step,
                     color,
                     nodeId,
-                    name:        step.name,
                     start:       stepStart,
                     end:         stepStart + stepDuration,
-                    changes:     step.change,
-                    onEnter:     step.onEnter,
-                    onExit:      step.onExit,
                     triggerName: trigger.name,
                 });
             });
@@ -456,14 +454,14 @@ class VanillaScroll {
 
         allStepsInfo
             .sort((a, b) => a.start - b.start)
-            .forEach(({ name, start, end, nodeId, changes, onEnter, onExit, triggerName, color }) => {
-                this.addStep(start, end, nodeId, changes, onEnter, onExit);
+            .forEach(step => {
+                this.addStep(step);
                 this.addLevelIndicator(
                     IndicatorType.step,
-                    `${name} (${triggerName})`,
-                    start,
-                    end - start,
-                    color,
+                    `${step.name} (${step.triggerName})`,
+                    step.start,
+                    step.end - step.start,
+                    step.color,
                 );
             })
         ;

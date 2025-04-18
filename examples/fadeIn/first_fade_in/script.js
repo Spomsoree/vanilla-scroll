@@ -6,18 +6,18 @@ const headline = container.querySelector('h2');
 
 scrolling
     .addTrigger({
-        name:    'First',
+        name: 'First',
         trigger: container,
-        steps:   [
+        steps: [
             {
-                name:     'Fade In',
-                element:  headline,
-                offset:   -10,
+                name: 'Fade In',
+                element: headline,
+                offset: -10,
                 duration: 7,
-                change:   {
+                changes: {
                     opacity: {
                         from: 0,
-                        to:   1,
+                        to: 1,
                     },
                 },
             },

@@ -6,30 +6,30 @@ const headline = document.querySelector('h1');
 
 scrolling
     .addTrigger({
-        name:    'Intro',
+        name: 'Intro',
         trigger: container,
-        steps:   [
+        steps: [
             {
-                name:     'Scale up',
-                element:  headline,
-                offset:   0,
+                name: 'Scale up',
+                element: headline,
+                offset: 0,
                 duration: 10,
-                change:   {
+                changes: {
                     transform: {
                         from: 'scale(1)',
-                        to:   'scale(20)',
+                        to: 'scale(20)',
                     },
                 },
             },
             {
-                name:     'Blur',
-                element:  headline,
-                offset:   3,
+                name: 'Blur',
+                element: headline,
+                offset: 3,
                 duration: 10,
-                change:   {
+                changes: {
                     filter: {
                         from: 'blur(0px)',
-                        to:   'blur(10px)',
+                        to: 'blur(10px)',
                     },
                 },
             },

@@ -13,7 +13,7 @@ scrolling
                 name: 'Scale up',
                 element: headline,
                 offset: 0,
-                duration: 10,
+                duration: 16,
                 changes: {
                     transform: {
                         from: 'scale(1)',
@@ -22,26 +22,14 @@ scrolling
                 },
             },
             {
-                name: 'Blur',
+                name: 'Scale down',
                 element: headline,
-                offset: 3,
-                duration: 10,
+                offset: 16,
+                duration: 16,
                 changes: {
-                    filter: {
-                        from: 'blur(0px)',
-                        to: 'blur(10px)',
-                    },
-                },
-            },
-            {
-                name: 'Fade out',
-                element: headline,
-                offset: 8,
-                duration: 8,
-                changes: {
-                    opacity: {
-                        from: 1,
-                        to: 0,
+                    transform: {
+                        from: 'scale(20)',
+                        to: 'scale(1)',
                     },
                 },
             },

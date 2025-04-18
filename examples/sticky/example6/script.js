@@ -16,14 +16,26 @@ scrolling
         trigger: container,
         steps:   [
             {
-                name:     'Scale up and rotate',
+                name:     'Scale up',
                 element:  headline,
                 offset:   0,
-                duration: 10,
+                duration: 20,
                 change:   {
                     transform: {
-                        from: 'scale(1) rotate(0deg)',
-                        to:   'scale(20) rotate(90deg)',
+                        from: 'scale(1)',
+                        to:   'scale(20)',
+                    },
+                },
+            },
+            {
+                name:     'Rotate',
+                element:  headline,
+                offset:   7,
+                duration: 3,
+                change:   {
+                    transform: {
+                        from: 'rotate(0)',
+                        to:   'rotate(90deg)',
                     },
                 },
             },
@@ -34,8 +46,8 @@ scrolling
                 duration: 10,
                 change:   {
                     filter: {
-                        from: 'blur(0px)',
-                        to:   'blur(10px)',
+                        from: 'blur(0px) grayscale(0)',
+                        to:   'grayscale(80%) blur(10px)',
                     },
                 },
             },

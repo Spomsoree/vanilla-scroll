@@ -8,9 +8,9 @@ class VanillaScroll {
     constructor({ debug }) {
         this.debug          = debug;
         this.steps          = [];
+        this.nodes          = [];
         this.triggers       = [];
         this.percentage     = 0;
-        this.lastScrollY    = 0;
         this.scrollTop      = 0;
         this.scrollHeight   = 0;
         this.clientHeight   = 0;
@@ -138,7 +138,7 @@ class VanillaScroll {
             type,
             {
                 detail: {
-                    element: step.element,
+                    element: this.nodes[step.nodeId],
                 },
             },
         );
@@ -168,9 +168,8 @@ class VanillaScroll {
         return (values.from + ((values.to - values.from) * progressFactor)).toFixed(2);
     };
 
-    calculateTick = (step, calculationFunction, eventFunction) => {
+    calculateTick = (step, styleChanges, calculationFunction, eventFunction) => {
         const parsedChanges = step.parsedChanges;
-        const element       = step.element;
 
         eventFunction(step);
 
@@ -182,37 +181,42 @@ class VanillaScroll {
             const { from, to } = values;
             let formattedValue = '';
 
-            from.forEach((change, index) => {
+            Object.entries(from).forEach(([index, change]) => {
                 const value = calculationFunction({ from: change.value, to: to[index].value }, step);
-                formattedValue += `${change.prefix || ''}${value}${change.unit || ''}${change.suffix || ''} `;
-
+                formattedValue += `${change.prefix || ''}${value}${change.unit || ''}${change.suffix || ''}`;
             });
 
-            element.style[key] = formattedValue;
+            if (!styleChanges[key]) {
+                styleChanges[key] = '';
+            }
+
+            styleChanges[key] += formattedValue;
         });
+
+        return styleChanges;
     };
 
-    calculateStep = (step, initially = false) => {
+    calculateStep = (step, styleChanges, initially = false) => {
         if (
             !initially &&
             !step.lastTickInRange &&
             !step.lastTickInAfterRange &&
             (this.percentage < step.start || this.percentage > step.end)
         ) {
-            return;
+            return styleChanges;
         }
 
         if (this.percentage >= step.start && this.percentage <= step.end) {
             step.lastTickInRange      = true;
             step.lastTickInAfterRange = false;
 
-            this.calculateTick(step, this.calculateInRangeSteps, this.sendEvents(true));
+            return this.calculateTick(step, styleChanges, this.calculateInRangeSteps, this.sendEvents(true));
         } else if (initially || step.lastTickInRange || step.lastTickInAfterRange) {
             step.lastTickInRange = false;
 
             if (this.percentage > step.end) {
                 step.lastTickInAfterRange = true;
-                this.calculateTick(step, (values) => values.to, this.sendEvents(false));
+                return this.calculateTick(step, styleChanges, (values) => values.to, this.sendEvents(false));
             }
 
             if (
@@ -220,31 +224,31 @@ class VanillaScroll {
                 (!initially || step.lastTickInAfterRange)
             ) {
                 step.lastTickInAfterRange = false;
-                this.calculateTick(step, (values) => values.from, this.sendEvents(false));
+                return this.calculateTick(step, styleChanges, (values) => values.from, this.sendEvents(false));
             }
         }
+
+        return styleChanges;
     };
 
     calculateSteps = () => {
-        const relevantSteps = this.steps.filter(step =>
-            step.lastTickInRange ||
-            step.lastTickInAfterRange ||
-            (this.percentage >= step.start && this.percentage <= step.end) ||
-            (this.scrollDirection === 'down' && this.percentage < step.start && this.percentage > step.start - 0.1) ||
-            (this.scrollDirection === 'up' && this.percentage > step.end && this.percentage < step.end + 0.1),
-        );
+        const nodeStyleChanges = {};
 
-        for (let index = 0; index < relevantSteps.length; index++) {
-            this.calculateStep(relevantSteps[index]);
-        }
+        this.steps.forEach(step => {
+            const styleChanges = nodeStyleChanges[step.nodeId];
+
+            nodeStyleChanges[step.nodeId] = this.calculateStep(step, styleChanges ?? {});
+        });
+        
+        Object.entries(nodeStyleChanges).forEach(([nodeId, nodeStyleChange]) => {
+            this.nodes[nodeId].style = Object.entries(nodeStyleChange).map(([property, value]) => `${property}:${value};`).join('');
+        });
     };
 
     calculatePercentage = () => {
-        const newScrollY     = document.documentElement.scrollTop;
-        this.scrollDirection = newScrollY > this.lastScrollY ? 'down' : 'up';
-        this.lastScrollY     = newScrollY;
-        this.percentage      = (newScrollY + this.scrollTop) / this.scrollHeight;
-        this.animationFrame  = requestAnimationFrame(() => {
+        const newScrollY    = document.documentElement.scrollTop;
+        this.percentage     = (newScrollY + this.scrollTop) / this.scrollHeight;
+        this.animationFrame = requestAnimationFrame(() => {
             this.calculateSteps();
             this.updateCurrentPosition();
         });
@@ -301,68 +305,77 @@ class VanillaScroll {
         this.addDebug();
     };
 
-    parseStringChanges = (input) => {
+    parseStringChange = (input) => {
         let match;
-        const changes = [];
+        const changes = {};
         const regex   = /(\w+)\(([-+]?[\d.]+)([a-zA-Z%]*)(?:,\s*([-+]?[\d.]+)([a-zA-Z%]*))*\)/g;
 
         while ((match = regex.exec(input)) !== null) {
-            const change = {
-                unit:   match[3] || '',
-                value:  parseFloat(match[2]),
-                prefix: `${match[1]}(`,
+            const prefix = `${match[1]}(`;
+            const value  = parseFloat(match[2]);
+            const unit   = value && match[3] !== '' ? match[3] : null;
+
+            changes[prefix] = {
+                unit,
+                value,
+                prefix,
                 suffix: ')',
             };
-
-            if (match[4]) {
-                change.additionalValues = [];
-
-                for (let index = 4; index < match.length; index += 2) {
-                    if (match[index]) {
-                        change.additionalValues.push({
-                            value: parseFloat(match[index]),
-                            unit:  match[index + 1] || '',
-                        });
-                    }
-                }
-            }
-
-            changes.push(change);
         }
 
         return changes;
     };
 
-    prepareStep = (step) => {
-        const changes = step.changes;
+    parseStringChanges = (values) => {
+        const fromValues = this.parseStringChange(values.from);
+        const toValues   = this.parseStringChange(values.to);
 
-        for (const key in changes) {
-            const values            = changes[key];
-            step.parsedChanges[key] = {};
+        Object.entries(fromValues).forEach(([key, from]) => {
+            const to = toValues[key];
 
-            if (typeof values.to === 'string' && typeof values.from === 'string') {
-                step.parsedChanges[key] = {
-                    from: this.parseStringChanges(values.from),
-                    to:   this.parseStringChanges(values.to),
-                };
-            } else {
-                step.parsedChanges[key] = {
-                    from: [{
-                        value: values.from,
-                    }],
-                    to:   [{
-                        value: values.to,
-                    }],
-                };
+            if (to.unit && !from.unit) {
+                from.unit = to.unit;
+            } else if (from.unit && !to.unit) {
+                to.unit = from.unit;
             }
-        }
+        });
+
+        return {
+            from: fromValues,
+            to:   toValues,
+        };
     };
 
-    addStep = (start, end, element, changes, onEnter, onExit) => {
+    prepareStep = (step) => {
+        if (!step.changes) {
+            return;
+        }
+
+        Object.entries(step.changes)
+              .forEach(([key, values]) => {
+                  step.parsedChanges[key] = {};
+
+                  if (typeof values.to === 'string' && typeof values.from === 'string') {
+                      step.parsedChanges[key] = this.parseStringChanges(values);
+                  } else {
+                      step.parsedChanges[key] = {
+                          from: [{
+                              value: values.from,
+                          }],
+                          to:   [{
+                              value: values.to,
+                          }],
+                      };
+                  }
+              })
+        ;
+    };
+
+    addStep = (start, end, nodeId, changes, onEnter, onExit) => {
         const step = {
             start,
             end,
-            element,
+            nodeId,
             changes,
             onEnter,
             onExit,
@@ -371,7 +384,7 @@ class VanillaScroll {
 
         this.steps.push(step);
         this.prepareStep(step);
-        this.calculateStep(step, true);
+        this.calculateStep(step, {}, true);
     };
 
     addTrigger = (trigger) => {
@@ -423,15 +436,25 @@ class VanillaScroll {
             );
 
             trigger.steps?.forEach(step => {
+                let nodeId;
                 const stepStart    = step.offset / 100 * duration + start;
                 const stepDuration = step.duration / 100 * duration;
+                const nodeIndex    = this.nodes.indexOf(step.element);
+
+                if (nodeIndex > -1) {
+                    nodeId = nodeIndex;
+                } else {
+                    this.nodes.push(step.element);
+
+                    nodeId = this.nodes.indexOf(step.element);
+                }
 
                 allStepsInfo.push({
                     color,
+                    nodeId,
                     name:        step.name,
                     start:       stepStart,
                     end:         stepStart + stepDuration,
-                    element:     step.element,
                     changes:     step.change,
                     onEnter:     step.onEnter,
                     onExit:      step.onExit,
@@ -442,8 +465,8 @@ class VanillaScroll {
 
         allStepsInfo
             .sort((a, b) => a.start - b.start)
-            .forEach(({ name, start, end, element, changes, onEnter, onExit, triggerName, color }) => {
-                this.addStep(start, end, element, changes, onEnter, onExit);
+            .forEach(({ name, start, end, nodeId, changes, onEnter, onExit, triggerName, color }) => {
+                this.addStep(start, end, nodeId, changes, onEnter, onExit);
                 this.addLevelIndicator(
                     IndicatorType.step,
                     `${name} (${triggerName})`,

@@ -22,6 +22,18 @@ scrolling
                 },
             },
             {
+                name:     'Rotate',
+                element:  headline,
+                offset:   1,
+                duration: 7,
+                change:   {
+                    transform: {
+                        from: 'rotate(0)',
+                        to:   'rotate(45deg)',
+                    },
+                },
+            },
+            {
                 name:     'Blur',
                 element:  headline,
                 offset:   3,
@@ -34,21 +46,9 @@ scrolling
                 },
             },
             {
-                name:     'Rotate',
-                element:  headline,
-                offset:   7,
-                duration: 3,
-                change:   {
-                    transform: {
-                        from: 'rotate(0)',
-                        to:   'rotate(90deg)',
-                    },
-                },
-            },
-            {
                 name:     'Fade out',
                 element:  headline,
-                offset:   8,
+                offset:   7,
                 duration: 8,
                 change:   {
                     opacity: {

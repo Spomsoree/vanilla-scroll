@@ -13,7 +13,7 @@ scrolling
                 name: 'Border Top Grow',
                 element: headline,
                 offset: 0,
-                duration: 8,
+                duration: 4,
                 changes: {
                     borderTopWidth: {
                         from: '1px',
@@ -28,8 +28,104 @@ scrolling
             {
                 name: 'Border Bottom Grow',
                 element: headline,
+                offset: 4,
+                duration: 4,
+                changes: {
+                    borderTopWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                    borderBottomWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                },
+            },
+            {
+                name: 'Border Top Grow',
+                element: headline,
                 offset: 8,
-                duration: 8,
+                duration: 4,
+                changes: {
+                    borderTopWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                    borderBottomWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                },
+            },
+            {
+                name: 'Border Bottom Grow',
+                element: headline,
+                offset: 12,
+                duration: 4,
+                changes: {
+                    borderTopWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                    borderBottomWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                },
+            },
+            {
+                name: 'Border Top Grow',
+                element: headline,
+                offset: 16,
+                duration: 4,
+                changes: {
+                    borderTopWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                    borderBottomWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                },
+            },
+            {
+                name: 'Border Bottom Grow',
+                element: headline,
+                offset: 20,
+                duration: 4,
+                changes: {
+                    borderTopWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                    borderBottomWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                },
+            },
+            {
+                name: 'Border Top Grow',
+                element: headline,
+                offset: 24,
+                duration: 4,
+                changes: {
+                    borderTopWidth: {
+                        from: '1px',
+                        to: '20px',
+                    },
+                    borderBottomWidth: {
+                        from: '20px',
+                        to: '1px',
+                    },
+                },
+            },
+            {
+                name: 'Border Bottom Grow',
+                element: headline,
+                offset: 28,
+                duration: 4,
                 changes: {
                     borderTopWidth: {
                         from: '20px',

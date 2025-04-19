@@ -28,7 +28,7 @@ scrolling
                 duration: 10,
                 changes: {
                     transform: {
-                        from: 'scale(0) translateY(0)',
+                        from: 'scale(1) translateY(0)',
                         to: 'translateY(50%) scale(20)',
                     },
                 },

@@ -1,156 +1,80 @@
-const IndicatorType = Object.freeze({
-    currentPosition: 'current-position',
-    trigger:         'trigger',
-    step:            'step',
-});
+import {
+    IndicatorType,
+    GOLDEN_ANGLE,
+    DEGREES_IN_CIRCLE,
+    DEBUG_COLOR_SATURATION,
+    DEBUG_COLOR_LIGHTNESS,
+} from './constants.js';
+import { parseStringChanges, reconstructValue } from './parser.js';
+import { CssGenerator } from './css-generator.js';
+import { DebugVisualizer } from './debug-visualizer.js';
 
 class VanillaScroll {
+    #handlers;
+
     constructor(options) {
-        this.debug          = options?.debug;
-        this.steps          = [];
-        this.nodes          = [];
-        this.triggers       = [];
-        this.percentage     = 0;
-        this.scrollTop      = 0;
-        this.scrollHeight   = 0;
-        this.clientHeight   = 0;
-        this.animationFrame = null;
+        this.debug            = options?.debug;
+        this.steps            = [];
+        this.nodes            = [];
+        this.triggers         = [];
+        this.percentage       = 0;
+        this.scrollTop        = 0;
+        this.scrollHeight     = 0;
+        this.clientHeight     = 0;
+        this.animationFrame   = null;
+        this.useCssAnimations = this.supportsCssScrollAnimations();
+        this.stepsWithEvents  = [];
+        this.cssGenerator     = null;
+        this.debugVisualizer  = this.debug ? new DebugVisualizer() : null;
+
+        this.#handlers = {
+            scroll:       () => this.onScroll(),
+            resize:       () => this.onResize(),
+            scrollEvents: () => this.onScrollEvents(),
+        };
 
         this.start();
     }
 
-    addIndicator = (type, name, topPositionInPercent, endInPercent, color) => {
-        if (!this.debug) {
+    supportsCssScrollAnimations() {
+        try {
+            return CSS.supports('animation-timeline', 'scroll()');
+        } catch {
+            return false;
+        }
+    }
+
+    getEvent(type, step) {
+        return new CustomEvent(type, {
+            detail: { element: this.nodes[step.nodeId] },
+        });
+    }
+
+    sendEvents(didEnter) {
+        return (step) => {
+            if (didEnter && !step.enterCache) {
+                step.enterCache = true;
+                if (typeof step.onEnter === 'function') {
+                    step.onEnter(this.getEvent('didEnter', step));
+                }
+            } else if (!didEnter && step.enterCache) {
+                step.enterCache = false;
+                if (typeof step.onExit === 'function') {
+                    step.onExit(this.getEvent('didExit', step));
+                }
+            }
             return null;
-        }
-
-        const indicator = document.createElement('div');
-        const styles    = {
-            left:        this.setCssPercent(topPositionInPercent),
-            width:       this.setCssPercent(endInPercent),
-            borderColor: color,
         };
+    }
 
-        Object.assign(indicator.style, styles);
-        indicator.setAttribute('indicator-name', name);
-        indicator.classList.add(type, 'indicator');
-        this.debugElement.appendChild(indicator);
-
-        return indicator;
-    };
-
-    addLevelIndicator = (type, name, topPositionInPercent, endInPercent, color) => {
-        if (!this.debug) {
-            return;
-        }
-
-        let lowestFreeIndex;
-        const indicator      = this.addIndicator(type, name, topPositionInPercent, endInPercent, color);
-        const indexes        = this.debugIndexes[type].indexes;
-        const freeFoundIndex = indexes.findIndex(stepEnd => stepEnd <= topPositionInPercent);
-        lowestFreeIndex      = freeFoundIndex === -1 ? indexes.length : freeFoundIndex;
-
-        this.debugIndexes[type].indexes[lowestFreeIndex] = topPositionInPercent + endInPercent - 0.0001;
-
-        if (lowestFreeIndex > this.debugIndexes[type].max) {
-            this.debugIndexes[type].max = lowestFreeIndex;
-        }
-
-        indicator.style.setProperty('--step-level', `${lowestFreeIndex + 1}`);
-    };
-
-    applyDebugStyleUpdates = () => {
-        if (!this.debug) {
-            return;
-        }
-
-        Object.entries(this.debugIndexes).forEach(([type, data]) => this.debugElement.style.setProperty(`--${type}-count`, `${data.max + 2}`));
-    };
-
-    addDebug = () => {
-        if (!this.debug) {
-            return;
-        }
-
-        this.debugIndexes = {
-            [IndicatorType.step]:    {
-                max:     0,
-                indexes: [],
-            },
-            [IndicatorType.trigger]: {
-                max:     0,
-                indexes: [],
-            },
-        };
-
-        this.debugElement    = document.createElement('div');
-        this.currentPosition = this.addIndicator(
-            IndicatorType.currentPosition,
-            null,
-            document.documentElement.scrollTop,
-            this.getCurrentPositionWidth(),
-        );
-
-        this.debugElement.classList.add('vanilla-scroll-debug');
-        document.body.appendChild(this.debugElement);
-        this.currentPosition.setAttribute('id', IndicatorType.currentPosition);
-    };
-
-    updateCurrentPosition = () => {
-        if (!this.debug || !this.currentPosition) {
-            return;
-        }
-
-        const scrollPercentage = (document.documentElement.scrollTop + this.scrollTop) / (this.scrollHeight - this.clientHeight);
-
-        if (!this.positionUpdateScheduled) {
-            this.positionUpdateScheduled = true;
-
-            requestAnimationFrame(() => {
-                this.currentPosition.style.left = this.setCssPercent(this.percentage);
-                this.positionUpdateScheduled    = false;
-
-                this.currentPosition.setAttribute('indicator-name', this.setCssPercent(scrollPercentage));
-            });
-        }
-    };
-
-    getEvent = (type, step) => {
-        return new CustomEvent(
-            type,
-            {
-                detail: {
-                    element: this.nodes[step.nodeId],
-                },
-            },
-        );
-    };
-
-    sendEvents = (didEnter) => (step) => {
-        if (didEnter && !step.enterCache) {
-            step.enterCache = true;
-
-            if (typeof step.onEnter === 'function') {
-                step.onEnter(this.getEvent('didEnter', step));
-            }
-        } else if (!didEnter && step.enterCache) {
-            step.enterCache = false;
-
-            if (typeof step.onExit === 'function') {
-                step.onExit(this.getEvent('didExit', step));
-            }
-        }
-
-        return null;
-    };
-
-    calculateInRangeSteps = (values, step) => {
-        const progressFactor = (this.percentage - step.start) / (step.end - step.start);
+    calculateInRangeSteps(values, step) {
+        const range          = step.end - step.start;
+        const progressFactor = range > 0 ? (this.percentage - step.start) / range : 0;
 
         return values.from + ((values.to - values.from) * progressFactor);
-    };
+    }
 
-    calculateTick = (step, styleChanges, calculationFunction, eventFunction) => {
+    calculateTick(step, styleChanges, calculationFunction, eventFunction) {
         const parsedChanges = step.parsedChanges;
 
         eventFunction(step);
@@ -159,64 +83,63 @@ class VanillaScroll {
             return;
         }
 
-        Object.entries(parsedChanges).forEach(([key, values]) => {
-            const cssKey       = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
-            const { from, to } = values;
+        Object.entries(parsedChanges).forEach(([key, parsed]) => {
+            const cssKey                 = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+            const { template, from, to } = parsed;
+            const interpolatedValues     = [];
 
-            Object.entries(from).forEach(([index, change]) => {
-                const value  = calculationFunction({ from: change.value, to: to[index].value }, step);
-                const prefix = change.prefix ?? 0;
-
-                if (!styleChanges[cssKey]) {
-                    styleChanges[cssKey] = {};
-                }
-
-                styleChanges[cssKey][prefix] = {
-                    ...change,
-                    value,
-                };
+            from.forEach((fromValue, index) => {
+                const toValue      = to[index];
+                const interpolated = calculationFunction({ from: fromValue.value, to: toValue.value }, step);
+                interpolatedValues.push({ value: interpolated, unit: fromValue.unit });
             });
+
+            styleChanges[cssKey] = { template, values: interpolatedValues };
         });
 
         return styleChanges;
-    };
+    }
 
-    calculateStep = (step, styleChanges, initially = false) => {
+    calculateStep(step, styleChanges, initially = false) {
+        const percentage = this.getActivePercentage();
+
         if (
             !initially &&
             !step.lastTickInRange &&
             !step.lastTickInAfterRange &&
-            (this.percentage < step.start || this.percentage > step.end)
+            (percentage < step.start || percentage > step.end)
         ) {
             return styleChanges;
         }
 
-        if (this.percentage >= step.start && this.percentage <= step.end) {
+        if (percentage >= step.start && percentage <= step.end) {
             step.lastTickInRange      = true;
             step.lastTickInAfterRange = false;
 
-            return this.calculateTick(step, styleChanges, this.calculateInRangeSteps, this.sendEvents(true));
+            return this.calculateTick(
+                step,
+                styleChanges,
+                (values, step) => this.calculateInRangeSteps(values, step),
+                this.sendEvents(true)
+            );
         } else if (initially || step.lastTickInRange || step.lastTickInAfterRange) {
             step.lastTickInRange = false;
 
-            if (this.percentage > step.end) {
+            if (percentage > step.end) {
                 step.lastTickInAfterRange = true;
                 return this.calculateTick(step, styleChanges, (values) => values.to, this.sendEvents(false));
             }
 
-            if (
-                this.percentage < step.start &&
-                (!initially || step.lastTickInAfterRange)
-            ) {
+            if (percentage < step.start && (!initially || step.lastTickInAfterRange)) {
                 step.lastTickInAfterRange = false;
                 return this.calculateTick(step, styleChanges, (values) => values.from, this.sendEvents(false));
             }
         }
 
         return styleChanges;
-    };
+    }
 
-    calculateSteps = () => {
+    calculateSteps() {
         const nodeStyleChanges = {};
 
         this.steps.forEach(step => {
@@ -224,151 +147,71 @@ class VanillaScroll {
         });
 
         Object.entries(nodeStyleChanges).forEach(([nodeId, nodeStyleChange]) => {
-            this.nodes[nodeId].style = Object.entries(nodeStyleChange).map(([property, value]) => {
-                const stringValue = Object.values(value).map(val => {
-                    return `${val.prefix || ''}${val.value.toFixed(2)}${val.unit || ''}${val.suffix || ''}`;
-                }).join('');
-
+            this.nodes[nodeId].style = Object.entries(nodeStyleChange).map(([property, data]) => {
+                const stringValue = reconstructValue(data.template, data.values);
                 return `${property}:${stringValue};`;
             }).join('');
         });
-    };
+    }
 
-    calculatePercentage = () => {
+    calculatePercentage() {
         const newScrollY    = document.documentElement.scrollTop;
-        this.percentage     = (newScrollY + this.scrollTop) / this.scrollHeight;
+        this.percentage     = this.scrollHeight > 0 ? (newScrollY + this.scrollTop) / this.scrollHeight : 0;
         this.animationFrame = requestAnimationFrame(() => {
             this.calculateSteps();
-            this.updateCurrentPosition();
+            this.debugVisualizer?.updateCurrentPosition(
+                this.percentage,
+                this.scrollTop,
+                this.scrollHeight,
+                this.clientHeight
+            );
         });
-    };
+    }
 
-    calculateBounds = () => {
+    calculateBounds() {
         this.scrollTop    = document.body.scrollTop;
         this.scrollHeight = document.documentElement.scrollHeight;
         this.clientHeight = window.innerHeight;
 
         this.calculatePercentage();
-    };
+    }
 
-    setCssPercent = (() => {
-        const cache = {};
-
-        return (percent) => {
-            const key = Math.round(percent * 10000);
-
-            if (cache[key] === undefined) {
-                cache[key] = `${(percent * 100).toFixed(2)}%`;
-            }
-
-            return cache[key];
-        };
-    })();
-
-    getCurrentPositionWidth = () => this.clientHeight / this.scrollHeight;
-
-    resizeCurrentPosition = () => {
-        if (this.currentPosition) {
-            this.currentPosition.style.width = this.setCssPercent(this.getCurrentPositionWidth());
-        }
-    };
-
-    onResize = () => {
+    onResize() {
         this.calculateBounds();
-        this.resizeCurrentPosition();
-    };
+        this.debugVisualizer?.resizeCurrentPosition(this.clientHeight, this.scrollHeight);
+    }
 
-    onScroll = () => {
+    onScroll() {
         if (this.animationFrame) {
             cancelAnimationFrame(this.animationFrame);
             this.animationFrame = null;
         }
 
         this.calculatePercentage();
-    };
+    }
 
-    start = () => {
+    start() {
         this.calculateBounds();
-        window.addEventListener('scroll', this.onScroll, { passive: true });
-        window.addEventListener('resize', this.onResize, { passive: true });
-        this.addDebug();
-    };
+        window.addEventListener('scroll', this.#handlers.scroll, { passive: true });
+        window.addEventListener('resize', this.#handlers.resize, { passive: true });
 
-    parseStringChange = (input) => {
-        if (typeof input !== 'string') {
-            return {
-                0: {
-                    value: input,
-                },
-            };
+        if (this.debugVisualizer) {
+            this.debugVisualizer.init();
+            this.debugVisualizer.resizeCurrentPosition(this.clientHeight, this.scrollHeight);
         }
+    }
 
-        let match;
-        let didMatch  = false;
-        const changes = {};
-        const regex   = /(\w+)\(([-+]?[\d.]+)([a-zA-Z%]*)(?:,\s*([-+]?[\d.]+)([a-zA-Z%]*))*\)/g;
-
-        while ((match = regex.exec(input)) !== null) {
-            didMatch     = true;
-            const prefix = `${match[1]}(`;
-            const value  = parseFloat(match[2]);
-            const unit   = value && match[3] !== '' ? match[3] : null;
-
-            changes[prefix] = {
-                unit,
-                value,
-                prefix,
-                suffix: ')',
-            };
-        }
-
-        if (!didMatch) {
-            const simpleRegex = /([-+]?[\d.]+)([a-zA-Z%]*)/g;
-
-            while ((match = simpleRegex.exec(input)) !== null) {
-                changes[0] = {
-                    unit:  match[2],
-                    value: parseFloat(match[1]),
-                };
-            }
-        }
-
-        return changes;
-    };
-
-    parseStringChanges = (values) => {
-        const fromValues = this.parseStringChange(values.from);
-        const toValues   = this.parseStringChange(values.to);
-
-        Object.entries(fromValues).forEach(([key, from]) => {
-            const to = toValues[key];
-
-            if (to.unit && !from.unit) {
-                from.unit = to.unit;
-            } else if (from.unit && !to.unit) {
-                to.unit = from.unit;
-            }
-        });
-
-        return {
-            from: fromValues,
-            to:   toValues,
-        };
-    };
-
-    prepareStep = (step) => {
+    prepareStep(step) {
         if (!step.changes) {
             return;
         }
 
-        Object.entries(step.changes)
-              .forEach(([key, values]) => {
-                  step.parsedChanges[key] = this.parseStringChanges(values);
-              })
-        ;
-    };
+        Object.entries(step.changes).forEach(([key, values]) => {
+            step.parsedChanges[key] = parseStringChanges(values);
+        });
+    }
 
-    addStep = (step) => {
+    addStep(step) {
         const preparedStep = {
             ...step,
             parsedChanges: [],
@@ -377,15 +220,115 @@ class VanillaScroll {
         this.steps.push(preparedStep);
         this.prepareStep(preparedStep);
         this.calculateStep(preparedStep, {}, true);
-    };
+    }
 
-    addTrigger = (trigger) => {
+    addTrigger(trigger) {
+        if (!trigger?.trigger) {
+            console.warn('VanillaScroll: trigger must have a "trigger" element property');
+            return this;
+        }
+
+        if (!(trigger.trigger instanceof Element)) {
+            console.warn('VanillaScroll: trigger.trigger must be a DOM element');
+            return this;
+        }
+
         this.triggers.push(trigger);
         return this;
-    };
+    }
 
-    build = () => {
-        this.steps     = [];
+    cleanup() {
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
+
+        if (this.cssGenerator) {
+            this.cssGenerator.removeStyles();
+            this.cssGenerator = null;
+        }
+
+        this.nodes.forEach(node => {
+            if (node?.hasAttribute('data-vs-anim-id')) {
+                node.removeAttribute('data-vs-anim-id');
+            }
+        });
+
+        this.stepsWithEvents = [];
+        window.removeEventListener('scroll', this.#handlers.scrollEvents);
+    }
+
+    destroy() {
+        this.cleanup();
+
+        window.removeEventListener('scroll', this.#handlers.scroll);
+        window.removeEventListener('resize', this.#handlers.resize);
+
+        this.debugVisualizer?.destroy();
+        this.debugVisualizer = null;
+
+        this.steps    = [];
+        this.nodes    = [];
+        this.triggers = [];
+    }
+
+    checkEventSteps() {
+        this.stepsWithEvents.forEach(step => {
+            const inRange = this.percentage >= step.start && this.percentage <= step.end;
+            this.sendEvents(inRange)(step);
+        });
+    }
+
+    onScrollEvents() {
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
+
+        const newScrollY = document.documentElement.scrollTop;
+        this.percentage  = this.scrollHeight > 0 ? (newScrollY + this.scrollTop) / this.scrollHeight : 0;
+
+        this.animationFrame = requestAnimationFrame(() => {
+            this.checkEventSteps();
+            this.debugVisualizer?.updateCurrentPosition(
+                this.percentage,
+                this.scrollTop,
+                this.scrollHeight,
+                this.clientHeight
+            );
+        });
+    }
+
+    buildCssAnimations(allStepsInfo) {
+        this.cssGenerator = new CssGenerator(this.scrollHeight, this.clientHeight);
+
+        allStepsInfo.forEach(step => {
+            if (step.onEnter || step.onExit) {
+                this.stepsWithEvents.push(step);
+            }
+        });
+
+        this.cssGenerator.build(allStepsInfo, this.nodes);
+
+        window.removeEventListener('scroll', this.#handlers.scroll);
+        if (this.stepsWithEvents.length > 0 || this.debug) {
+            window.addEventListener('scroll', this.#handlers.scrollEvents, { passive: true });
+        }
+    }
+
+    getActivePercentage() {
+        return this.percentage;
+    }
+
+    build() {
+        this.cleanup();
+        this.steps = [];
+        this.nodes = [];
+
+        if (this.triggers.length === 0) {
+            return this;
+        }
+
         let colorIndex = 0;
 
         const triggerPositions = this.triggers.map((trigger) => {
@@ -398,18 +341,18 @@ class VanillaScroll {
 
             return {
                 trigger,
-                color:    `hsl(${Math.round((colorIndex * 137) % 360)}, 70%, 50%)`,
+                color:    `hsl(${Math.round((colorIndex * GOLDEN_ANGLE) % DEGREES_IN_CIRCLE)}, ${DEBUG_COLOR_SATURATION}%, ${DEBUG_COLOR_LIGHTNESS}%)`,
                 start:    triggerStart,
                 duration: triggerDuration,
             };
         });
 
-        triggerPositions.sort((a, b) => {
-            if (a.start + a.duration <= b.start) {
+        triggerPositions.sort((first, second) => {
+            if (first.start + first.duration <= second.start) {
                 return -1;
             }
 
-            if (b.start + b.duration <= a.start) {
+            if (second.start + second.duration <= first.start) {
                 return 1;
             }
 
@@ -419,26 +362,28 @@ class VanillaScroll {
         const allStepsInfo = [];
 
         triggerPositions.forEach(({ trigger, start, duration, color }) => {
-            this.addLevelIndicator(
+            this.debugVisualizer?.addLevelIndicator(
                 IndicatorType.trigger,
                 trigger.name,
                 start,
                 duration,
-                color,
+                color
             );
 
             trigger.steps?.forEach(step => {
-                let nodeId;
-                const stepStart    = step.offset / 100 * duration + start;
-                const stepDuration = step.duration / 100 * duration;
-                const nodeIndex    = this.nodes.indexOf(step.element);
+                if (!step.element || !(step.element instanceof Element)) {
+                    console.warn('VanillaScroll: step must have a valid "element" property');
+                    return;
+                }
 
-                if (nodeIndex > -1) {
-                    nodeId = nodeIndex;
-                } else {
-                    this.nodes.push(step.element);
+                const stepOffset   = step.offset ?? 0;
+                const stepLength   = step.duration ?? 100;
+                const stepStart    = stepOffset / 100 * duration + start;
+                const stepDuration = stepLength / 100 * duration;
+                let nodeId         = this.nodes.indexOf(step.element);
 
-                    nodeId = this.nodes.indexOf(step.element);
+                if (nodeId === -1) {
+                    nodeId = this.nodes.push(step.element) - 1;
                 }
 
                 allStepsInfo.push({
@@ -452,23 +397,29 @@ class VanillaScroll {
             });
         });
 
-        allStepsInfo
-            .sort((a, b) => a.start - b.start)
-            .forEach(step => {
-                this.addStep(step);
-                this.addLevelIndicator(
-                    IndicatorType.step,
-                    `${step.name} (${step.triggerName})`,
-                    step.start,
-                    step.end - step.start,
-                    step.color,
-                );
-            })
-        ;
+        allStepsInfo.sort((first, second) => first.start - second.start);
+
+        allStepsInfo.forEach(step => {
+            this.debugVisualizer?.addLevelIndicator(
+                IndicatorType.step,
+                `${step.name} (${step.triggerName})`,
+                step.start,
+                step.end - step.start,
+                step.color
+            );
+        });
+
+        if (this.useCssAnimations) {
+            this.buildCssAnimations(allStepsInfo);
+        } else {
+            allStepsInfo.forEach(step => this.addStep(step));
+        }
 
         this.calculateBounds();
-        this.applyDebugStyleUpdates();
-    };
+        this.debugVisualizer?.applyStyleUpdates();
+
+        return this;
+    }
 }
 
 export default VanillaScroll;

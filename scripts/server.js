@@ -53,9 +53,9 @@ const server = serve({
 });
 
 function shutdown() {
-    console.log('Shutting down server gracefully');
-    server.stop();
-    process.exit(0);
+    server.stop(() => {
+        process.exit(0);
+    });
 }
 
 process.on('SIGINT', shutdown);

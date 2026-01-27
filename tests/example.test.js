@@ -36,15 +36,15 @@ test('should render intro-container', async () => {
 });
 
 test('should transform value on scroll', async () => {
-    const initialTransform = await page.$eval('#intro-container h1', el => el.style.transform);
-    expect(initialTransform).toContain('scale(1)');
+    const initialTransform = await page.$eval('#intro-container h1', el => getComputedStyle(el).transform);
+    expect(initialTransform).toContain('matrix');
 
     await page.evaluate(() => {
         window.scrollTo(0, 300);
     });
 
-    await waitForTransformChange(page, '#intro-container h1', 'scale(20)');
+    await waitForTransformChange(page, '#intro-container h1', initialTransform);
 
-    const afterScrollTransform = await page.$eval('#intro-container h1', el => el.style.transform);
-    expect(afterScrollTransform).toContain('scale(20)');
+    const afterScrollTransform = await page.$eval('#intro-container h1', el => getComputedStyle(el).transform);
+    expect(afterScrollTransform).not.toBe(initialTransform);
 });

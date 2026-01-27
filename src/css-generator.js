@@ -41,6 +41,7 @@ export class CssGenerator {
 
             const animationNames  = [];
             const animationRanges = [];
+            const stepData        = [];
 
             steps.forEach((step) => {
                 if (!step.parsedChanges || Object.keys(step.parsedChanges).length === 0) {
@@ -49,6 +50,7 @@ export class CssGenerator {
 
                 const animationName = `vs-${nodeId}-${step.stepIndex}`;
                 const keyframesCss  = this.generateKeyframes(step, animationName);
+                const hasTransform  = Object.keys(step.parsedChanges).some(key => key === 'transform');
 
                 if (keyframesCss) {
                     keyframes += keyframesCss;
@@ -56,7 +58,21 @@ export class CssGenerator {
                     const startPercent = (step.start * conversionFactor * 100).toFixed(2);
                     const endPercent   = (step.end * conversionFactor * 100).toFixed(2);
                     animationRanges.push(`${startPercent}% ${endPercent}%`);
+                    stepData.push({ start: step.start, end: step.end, hasTransform });
                 }
+            });
+
+            const compositions = stepData.map((current, index) => {
+                if (!current.hasTransform) {
+                    return 'replace';
+                }
+                const hasOverlap = stepData.some((other, otherIndex) => {
+                    if (otherIndex === index || !other.hasTransform) {
+                        return false;
+                    }
+                    return current.start < other.end && current.end > other.start;
+                });
+                return hasOverlap ? 'add' : 'replace';
             });
 
             if (animationNames.length > 0) {
@@ -65,7 +81,7 @@ export class CssGenerator {
                 const durations = Array(count).fill('1s').join(',');
                 const fillModes = Array(count).fill('forwards').join(',');
                 const timingFns = Array(count).fill('linear').join(',');
-                selectors += `[data-vs-anim-id="${nodeId}"]{animation-name:${animationNames.join(',')};animation-duration:${durations};animation-timing-function:${timingFns};animation-fill-mode:${fillModes};animation-timeline:${timelines};animation-range:${animationRanges.join(',')}}`;
+                selectors += `[data-vs-anim-id="${nodeId}"]{animation-name:${animationNames.join(',')};animation-duration:${durations};animation-timing-function:${timingFns};animation-fill-mode:${fillModes};animation-timeline:${timelines};animation-range:${animationRanges.join(',')};animation-composition:${compositions.join(',')}}`;
             }
         });
 

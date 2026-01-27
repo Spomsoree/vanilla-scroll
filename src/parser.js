@@ -30,9 +30,33 @@ export function parseStringChange(input) {
     return { template, values };
 }
 
+function normalizeFunctionOrder(fromStr, toStr) {
+    const funcRegex  = /([a-zA-Z][a-zA-Z0-9]*)\([^)]+\)/g;
+    const fromFuncs  = [...String(fromStr).matchAll(funcRegex)];
+    const toFuncs    = [...String(toStr).matchAll(funcRegex)];
+
+    if (fromFuncs.length === 0 || toFuncs.length === 0) {
+        return { from: fromStr, to: toStr };
+    }
+
+    const fromByName = {};
+    const toByName   = {};
+
+    fromFuncs.forEach(match => fromByName[match[1]] = match[0]);
+    toFuncs.forEach(match => toByName[match[1]] = match[0]);
+
+    const sortedNames = [...new Set([...Object.keys(fromByName), ...Object.keys(toByName)])].sort();
+
+    return {
+        from: sortedNames.map(name => fromByName[name]).filter(Boolean).join(' '),
+        to:   sortedNames.map(name => toByName[name]).filter(Boolean).join(' '),
+    };
+}
+
 export function parseStringChanges(values) {
-    const from = parseStringChange(values.from);
-    const to   = parseStringChange(values.to);
+    const normalized = normalizeFunctionOrder(values.from, values.to);
+    const from       = parseStringChange(normalized.from);
+    const to         = parseStringChange(normalized.to);
 
     if (from.values.length !== to.values.length) {
         console.warn('VanillaScroll: from and to values have different number of numeric values');

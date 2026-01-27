@@ -33,7 +33,7 @@ export class DebugVisualizer {
         this.debugElement    = document.createElement('div');
         this.currentPosition = this.addIndicator(
             IndicatorType.currentPosition,
-            null,
+            '0.00%',
             document.documentElement.scrollTop,
             0,
         );
@@ -76,7 +76,9 @@ export class DebugVisualizer {
 
     applyStyleUpdates() {
         Object.entries(this.debugIndexes).forEach(([type, data]) => {
-            this.debugElement.style.setProperty(`--${type}-count`, `${data.max + 2}`);
+            if (data.indexes.length > 0) {
+                this.debugElement.style.setProperty(`--${type}-count`, `${data.max + 2}`);
+            }
         });
     }
 

@@ -2,8 +2,8 @@
 {
     --height:                  20px;
     --step-level:              0;
-    --step-count:              0;
-    --trigger-count:           0;
+    --step-count:              1;
+    --trigger-count:           1;
     --border-width:            2px;
     --border-radius:           8px;
     --padding:                 calc(var(--height) / 4);

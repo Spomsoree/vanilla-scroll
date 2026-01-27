@@ -5,9 +5,18 @@
     "homepage": "https://vanilla-scroll.spomsoree.dev",
     "repository": "https://github.com/Spomsoree/vanilla-scroll",
     "author": "Joshua Schumacher <jo@sh.ua> (https://jo.sh.ua)",
-    "type": "module",
     "license": "MIT",
-    "main": "dist/vanilla-scroll.js",
+    "type": "module",
+    "main": "./dist/vanilla-scroll.cjs",
+    "module": "./dist/vanilla-scroll.esm.js",
+    "exports": {
+        ".": {
+            "import": "./dist/vanilla-scroll.esm.js",
+            "require": "./dist/vanilla-scroll.cjs",
+            "default": "./dist/vanilla-scroll.esm.js"
+        },
+        "./debug.css": "./dist/debug.css"
+    },
     "scripts": {
         "dev": "bun run build && bun run dev:with-server",
         "dev:with-server": "bun run scripts/server.js & bun scripts/watch.js",
@@ -28,5 +37,14 @@
         "README.md",
         "dist",
         "src"
+    ],
+    "sideEffects": false,
+    "keywords": [
+        "scroll",
+        "animation",
+        "vanilla",
+        "javascript",
+        "css",
+        "scroll-driven-animations"
     ]
 }

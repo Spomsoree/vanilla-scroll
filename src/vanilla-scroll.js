@@ -306,8 +306,10 @@ class VanillaScroll {
             if (step.onEnter || step.onExit) {
                 this.stepsWithEvents.push(step);
             }
+            this.addStep(step);
         });
 
+        this.calculateSteps();
         this.cssGenerator.build(allStepsInfo, this.nodes);
 
         window.removeEventListener('scroll', this.#handlers.scroll);
@@ -413,6 +415,7 @@ class VanillaScroll {
             this.buildCssAnimations(allStepsInfo);
         } else {
             allStepsInfo.forEach(step => this.addStep(step));
+            this.calculateSteps();
         }
 
         this.calculateBounds();
